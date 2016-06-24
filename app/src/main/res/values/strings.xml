@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">Evroscudo</string>
+    <string name="cbr">ЦБ РФ</string>
+    <string name="ecb">ЕЦБ</string>
+    <string name="no_internet_connection">Нет подключения к интернету</string>
+    <string name="rba">Австралия</string>
+    <string name="bank_of_canada">Канада</string>
+    <string name="ua">Украина</string>
+    <string name="kz">Казахстан</string>
+    <string name="IL">Израиль</string>
+    <string name="czech">Чехия</string>
+    <string name="TJ">Таджикистан</string>
+    <string name="KG">Киргизия</string>
+    <string name="BY">Беларусь</string>
+    <string name="DK">Дания</string>
+    <string name="is">" за "</string>
+    <string name="info">Инфо</string>
+    <string name="ok">OK</string>
+    <string name="info_from">Информация взята с сайтов центральных банков</string>
+    <string-array name="sites_list">
+        <item>http://www.rba.gov.au/</item>
+        <item>http://www.nbrb.by/</item>
+        <item>http://www.nationalbanken.dk</item>
+        <item>http://www.ecb.europa.eu/</item>
+        <item>http://www.boi.org.il</item>
+        <item>http://www.nationalbank.kz/</item>
+        <item>http://www.bankofcanada.ca/</item>
+        <item>http://www.nbkr.kg/</item>
+        <item>http://cbr.ru/</item>
+        <item>http://nbt.tj</item>
+        <item>http://bank.gov.ua</item>
+        <item>http://www.cnb.cz/</item>
+    </string-array>
+</resources>
