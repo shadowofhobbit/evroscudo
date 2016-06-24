@@ -41,45 +41,31 @@ public class CurrencyAdapter extends ArrayAdapter<Currency> {
         holder.codeTextView.setText(code);
         Bank bank1 = activity.getFirstBank();
         String rate1 = getItem(position).getBankRate(bank1.getBanks());
-
-        if (TextUtils.isEmpty(rate1))
-            holder.bankRateTextView.setText("");
-        else {
-            StringBuilder text = new StringBuilder(rate1);
-            text.append(" ");
-            if (bank1.inMyCurrency) {
-                text.append(bank1.getCurrencyCode());
-                text.append(activity.getString(R.string.is));
-                text.append(getItem(position).getNominal(bank1.getBanks()));
-            } else {
-                text.append(code);
-                text.append(activity.getString(R.string.is));
-                text.append(getItem(position).getNominal(bank1.getBanks()));
-                text.append(bank1.getCurrencyCode());
-            }
-            holder.bankRateTextView.setText(text);
-        }
-
-
+        showRate(position, holder.bankRateTextView, code, bank1, rate1);
         Bank bank2 = activity.getSecondBank();
         String rate2 = getItem(position).getBankRate(bank2.getBanks());
-        if (TextUtils.isEmpty(rate2))
-            holder.bankRateTextView2.setText("");
+        showRate(position, holder.bankRateTextView2, code, bank2, rate2);
+
+        return convertView;
+    }
+
+    private void showRate(int position, TextView bankRateTextView, String code, Bank bank, String rate) {
+        if (TextUtils.isEmpty(rate))
+            bankRateTextView.setText("");
         else {
-            StringBuilder text = new StringBuilder(rate2);
+            StringBuilder text = new StringBuilder(rate);
             text.append(" ");
-            if (bank2.inMyCurrency) {
-                text.append(bank2.getCurrencyCode());
+            if (bank.inMyCurrency) {
+                text.append(bank.getCurrencyCode());
                 text.append(activity.getString(R.string.is));
-                text.append(getItem(position).getNominal(bank2.getBanks()));
+                text.append(getItem(position).getNominal(bank.getBanks()));
             } else {
                 text.append(code);
                 text.append(activity.getString(R.string.is));
-                text.append(getItem(position).getNominal(bank2.getBanks()));
-                text.append(bank2.getCurrencyCode());
+                text.append(getItem(position).getNominal(bank.getBanks()));
+                text.append(bank.getCurrencyCode());
             }
-            holder.bankRateTextView2.setText(text);
+            bankRateTextView.setText(text);
         }
-        return convertView;
     }
 }
