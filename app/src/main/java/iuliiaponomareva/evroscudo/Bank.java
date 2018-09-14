@@ -2,12 +2,12 @@ package iuliiaponomareva.evroscudo;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
 
 import java.text.Collator;
 import java.util.Date;
 import java.util.Locale;
 
+import androidx.annotation.NonNull;
 import iuliiaponomareva.evroscudo.parsers.ExchangeRatesParser;
 
 public class Bank implements Comparable<Bank>, Parcelable {

@@ -17,7 +17,7 @@ public abstract class ExchangeRatesParser {
 
     public abstract List<Currency> parse();
 
-    protected InputStream downloadUrl(String myURL) throws IOException {
+    InputStream downloadUrl(String myURL) throws IOException {
         URL url = new URL(myURL);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setReadTimeout(10000 /* milliseconds */);

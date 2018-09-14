@@ -1,34 +1,37 @@
 package iuliiaponomareva.evroscudo;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.AsyncTask;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import androidx.loader.content.CursorLoader;
 
-public class LoadRatesTask extends AsyncTask<Void, Void, Void> {
-    private DisplayRatesActivity activity;
+
+public class RatesLoader extends CursorLoader {
     private HashMap<String, Date> data = new HashMap<>();
-    private CurrenciesKeeper keeper;
     private Map<String, Currency> currencies = new HashMap<>();
-    LoadRatesTask(DisplayRatesActivity activity) {
-        this.activity = activity;
+    public RatesLoader(Context context) {
+        super(context);
     }
 
     @Override
-    protected Void doInBackground(Void... params) {
-        SQLiteOpenHelper helper = new RatesDBHelper(activity);
+    public Cursor loadInBackground() {
+        SQLiteOpenHelper helper = new RatesDBHelper(getContext());
         SQLiteDatabase database = null;
         try {
             database = helper.getReadableDatabase();
             readDates(database);
             readRates(database);
             readNominals(database);
-            keeper = new CurrenciesKeeper(currencies);
+            String query = "select * from "+ RatesContract.ExchangeRate.TABLE_NAME +" inner join "+
+                    RatesContract.Nominals.TABLE_NAME;
+            database.rawQuery(query, null);
+           // keeper = new CurrenciesKeeper(currencies);
 
         } finally {
 
@@ -36,8 +39,10 @@ public class LoadRatesTask extends AsyncTask<Void, Void, Void> {
                 database.close();
 
         }
-        return null;
+
+        return super.loadInBackground();
     }
+
 
     private void readNominals(SQLiteDatabase database) {
         Cursor cursor;
@@ -104,13 +109,4 @@ public class LoadRatesTask extends AsyncTask<Void, Void, Void> {
         cursor.close();
     }
 
-
-
-    @Override
-    protected void onPostExecute(Void aVoid) {
-        activity.setDates(data);
-        activity.setKeeper(keeper);
-        activity.getRates();
-
-    }
 }

@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 
 public class CurrencyAdapter extends ArrayAdapter<Currency> {
     private DisplayRatesActivity activity;
@@ -24,15 +26,16 @@ public class CurrencyAdapter extends ArrayAdapter<Currency> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    @NonNull
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(R.layout.list_item, parent, false);
             holder = new ViewHolder();
-            holder.codeTextView = (TextView) convertView.findViewById(R.id.currency_code);
-            holder.bankRateTextView = (TextView) convertView.findViewById(R.id.bank_rate);
-            holder.bankRateTextView2 = (TextView) convertView.findViewById(R.id.bank_2_rate);
+            holder.codeTextView = convertView.findViewById(R.id.currency_code);
+            holder.bankRateTextView = convertView.findViewById(R.id.bank_rate);
+            holder.bankRateTextView2 = convertView.findViewById(R.id.bank_2_rate);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();

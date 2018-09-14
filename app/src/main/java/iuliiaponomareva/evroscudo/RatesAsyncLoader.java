@@ -1,26 +1,30 @@
 package iuliiaponomareva.evroscudo;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.AsyncTask;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import androidx.loader.content.AsyncTaskLoader;
 
-public class LoadRatesTask extends AsyncTask<Void, Void, Void> {
+/**
+ * Created by Julia on 16.09.2016.
+ */
+public class RatesAsyncLoader extends AsyncTaskLoader<Object> {
     private DisplayRatesActivity activity;
     private HashMap<String, Date> data = new HashMap<>();
     private CurrenciesKeeper keeper;
     private Map<String, Currency> currencies = new HashMap<>();
-    LoadRatesTask(DisplayRatesActivity activity) {
-        this.activity = activity;
+    public RatesAsyncLoader(Context context) {
+        super(context);
     }
 
     @Override
-    protected Void doInBackground(Void... params) {
+    public Object loadInBackground() {
         SQLiteOpenHelper helper = new RatesDBHelper(activity);
         SQLiteDatabase database = null;
         try {
@@ -102,15 +106,5 @@ public class LoadRatesTask extends AsyncTask<Void, Void, Void> {
             cursor.moveToNext();
         }
         cursor.close();
-    }
-
-
-
-    @Override
-    protected void onPostExecute(Void aVoid) {
-        activity.setDates(data);
-        activity.setKeeper(keeper);
-        activity.getRates();
-
     }
 }
