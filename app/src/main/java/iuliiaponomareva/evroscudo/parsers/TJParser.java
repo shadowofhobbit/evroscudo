@@ -16,7 +16,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import iuliiaponomareva.evroscudo.Banks;
+import iuliiaponomareva.evroscudo.BankId;
 import iuliiaponomareva.evroscudo.Currency;
 
 public class TJParser extends ExchangeRatesParser {
@@ -93,8 +93,8 @@ public class TJParser extends ExchangeRatesParser {
 
         if ((bankRate != null) && (code != null)) {
             Currency currency = new Currency(code);
-            currency.setBankRate(bankRate, Banks.TJ);
-            currency.setNominal(nominal, Banks.TJ);
+            currency.setBankRate(bankRate, BankId.TJ);
+            currency.setNominal(nominal, BankId.TJ);
             return currency;
         }
         return null;

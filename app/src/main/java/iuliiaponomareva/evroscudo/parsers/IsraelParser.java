@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import iuliiaponomareva.evroscudo.Banks;
+import iuliiaponomareva.evroscudo.BankId;
 import iuliiaponomareva.evroscudo.Currency;
 
 
@@ -91,8 +91,8 @@ public class IsraelParser extends ExchangeRatesXMLParser {
 
         if ((bankRate != null) && (code != null)) {
             Currency currency = new Currency(code);
-            currency.setBankRate(bankRate, Banks.ISRAEL);
-            currency.setNominal(nominal, Banks.ISRAEL);
+            currency.setBankRate(bankRate, BankId.ISRAEL);
+            currency.setNominal(nominal, BankId.ISRAEL);
             return currency;
         }
         return null;

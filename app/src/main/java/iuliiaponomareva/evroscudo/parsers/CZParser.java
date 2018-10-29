@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 
-import iuliiaponomareva.evroscudo.Banks;
+import iuliiaponomareva.evroscudo.BankId;
 import iuliiaponomareva.evroscudo.Currency;
 
 public class CZParser extends ExchangeRatesParser {
@@ -51,8 +51,8 @@ public class CZParser extends ExchangeRatesParser {
                     String code = data[3];
                     int amount = Integer.parseInt(data[2]);
                     Currency currency = new Currency(code);
-                    currency.setBankRate(bankRate, Banks.CZ);
-                    currency.setNominal(amount, Banks.CZ);
+                    currency.setBankRate(bankRate, BankId.CZ);
+                    currency.setNominal(amount, BankId.CZ);
                     currencies.add(currency);
                 }
             }

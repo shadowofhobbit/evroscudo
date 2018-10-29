@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import iuliiaponomareva.evroscudo.Banks;
+import iuliiaponomareva.evroscudo.BankId;
 import iuliiaponomareva.evroscudo.Currency;
 
 
@@ -96,8 +96,8 @@ public class KZParser extends ExchangeRatesXMLParser {
 
         if ((bankRate != null) && (code != null)) {
             Currency currency = new Currency(code);
-            currency.setBankRate(bankRate, Banks.KZ);
-            currency.setNominal(nominal, Banks.KZ);
+            currency.setBankRate(bankRate, BankId.KZ);
+            currency.setNominal(nominal, BankId.KZ);
             return currency;
         }
         return null;

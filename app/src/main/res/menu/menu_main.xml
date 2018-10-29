@@ -5,4 +5,8 @@
         app:showAsAction="never"
         android:title="@string/info"
         android:onClick="showInfo"/>
+    <item android:id="@+id/settings"
+        android:title="@string/settings"
+        app:showAsAction="never"
+        android:onClick="showSettings"/>
 </menu>

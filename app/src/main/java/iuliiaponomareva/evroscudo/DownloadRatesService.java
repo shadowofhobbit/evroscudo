@@ -87,9 +87,9 @@ public class DownloadRatesService extends IntentService {
                 if (bank.getDate() != null) {
                     database.delete(RatesContract.Dates.TABLE_NAME,
                             RatesContract.Dates.COLUMN_NAME_BANK+" == ?",
-                            new String[]{bank.getBanks().name()});
+                            new String[]{bank.getBankId().name()});
                     ContentValues values = new ContentValues();
-                    values.put(RatesContract.Dates.COLUMN_NAME_BANK, bank.getBanks().name());
+                    values.put(RatesContract.Dates.COLUMN_NAME_BANK, bank.getBankId().name());
                     values.put(RatesContract.Dates.COLUMN_NAME_DATE, bank.getDate().getTime());
                     database.insert(RatesContract.Dates.TABLE_NAME, null, values);
                 }
@@ -97,7 +97,7 @@ public class DownloadRatesService extends IntentService {
             database.delete(RatesContract.ExchangeRate.TABLE_NAME, null, null);
             database.delete(RatesContract.Nominals.TABLE_NAME, null, null);
             for (Currency currency : currencies) {
-                for (Map.Entry<Banks, String> entry : currency.getBankRates().entrySet()) {
+                for (Map.Entry<BankId, String> entry : currency.getBankRates().entrySet()) {
                     ContentValues values = new ContentValues();
                     values.put(RatesContract.ExchangeRate.COLUMN_NAME_CURRENCY_CODE, currency.getCode());
                     values.put(RatesContract.ExchangeRate.COLUMN_NAME_BANK, entry.getKey().name());
@@ -105,7 +105,7 @@ public class DownloadRatesService extends IntentService {
                     database.insert(RatesContract.ExchangeRate.TABLE_NAME, null, values);
                 }
 
-                for (Map.Entry<Banks, Integer> entry : currency.getNominals().entrySet()) {
+                for (Map.Entry<BankId, Integer> entry : currency.getNominals().entrySet()) {
                     ContentValues values = new ContentValues();
                     values.put(RatesContract.Nominals.COLUMN_NAME_CURRENCY_CODE, currency.getCode());
                     values.put(RatesContract.Nominals.COLUMN_NAME_BANK, entry.getKey().name());

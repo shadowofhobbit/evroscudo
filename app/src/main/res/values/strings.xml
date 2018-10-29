@@ -17,8 +17,12 @@
     <string name="info">Инфо</string>
     <string name="ok">OK</string>
     <string name="info_from">Информация взята с сайтов центральных банков</string>
+    <string name="norges_bank">Норвегия</string>
+    <string name="sweden">Швеция</string>
+    <string name="uk">Великобритания</string>
     <string-array name="sites_list">
         <item>http://www.rba.gov.au/</item>
+        <item>http://www.bankofengland.co.uk</item>
         <item>http://www.nbrb.by/</item>
         <item>http://www.nationalbanken.dk</item>
         <item>http://www.ecb.europa.eu/</item>
@@ -30,5 +34,89 @@
         <item>http://nbt.tj</item>
         <item>http://bank.gov.ua</item>
         <item>http://www.cnb.cz/</item>
+        <item>http://www.norges-bank.no/</item>
+        <item>http://www.riksbank.se/</item>
     </string-array>
+    <string-array name="all_currencies" translatable="false">
+        <item>EUR</item>
+        <item>USD</item>
+        <item>AED</item>
+        <item>AFN</item>
+        <item>AMD</item>
+        <item>AUD</item>
+        <item>AZN</item>
+        <item>BDT</item>
+        <item>BGN</item>
+        <item>BRL</item>
+        <item>BYN</item>
+        <item>CAD</item>
+        <item>CHF</item>
+        <item>CNY</item>
+        <item>CZK</item>
+        <item>DKK</item>
+        <item>DZD</item>
+        <item>EGP</item>
+        <item>GEL</item>
+        <item>GBP</item>
+        <item>HKD</item>
+        <item>HRK</item>
+        <item>HUF</item>
+        <item>I44</item>
+        <item>IDR</item>
+        <item>ILS</item>
+        <item>INR</item>
+        <item>IQD</item>
+        <item>IRR</item>
+        <item>ISK</item>
+        <item>JOD</item>
+        <item>JPY</item>
+        <item>KGS</item>
+        <item>KRW</item>
+        <item>KWD</item>
+        <item>KZT</item>
+        <item>LBP</item>
+        <item>MAD</item>
+        <item>MDL</item>
+        <item>MMK</item>
+        <item>MNT</item>
+        <item>MXN</item>
+        <item>MYR</item>
+        <item>NOK</item>
+        <item>NZD</item>
+        <item>PGK</item>
+        <item>PHP</item>
+        <item>PKR</item>
+        <item>PLN</item>
+        <item>RON</item>
+        <item>RSD</item>
+        <item>RUB</item>
+        <item>SAR</item>
+        <item>SDR</item>
+        <item>SEK</item>
+        <item>SGD</item>
+        <item>THB</item>
+        <item>TJS</item>
+        <item>TMT</item>
+        <item>TND</item>
+        <item>TRY</item>
+        <item>TWD</item>
+        <!--AUD Trade-weighted Index-->
+        <item>TWI_4pm</item>
+        <item>UAH</item>
+        <item>UZS</item>
+        <item>VND</item>
+        <item>XAG</item>
+        <item>XAU</item>
+        <item>XDR</item>
+        <item>XPD</item>
+        <item>XPT</item>
+        <item>ZAR</item>
+    </string-array>
+    <string name="display">Показать</string>
+    <string name="no_display">Не показывать</string>
+    <string name="title_activity_settings">Настройки</string>
+
+    <string name="pref_header_general">Валюты</string>
+
+    <string name="settings">Настройки</string>
 </resources>

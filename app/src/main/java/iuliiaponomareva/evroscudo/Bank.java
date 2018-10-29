@@ -11,27 +11,32 @@ import androidx.annotation.NonNull;
 import iuliiaponomareva.evroscudo.parsers.ExchangeRatesParser;
 
 public class Bank implements Comparable<Bank>, Parcelable {
-    public boolean inMyCurrency;
+    boolean inMyCurrency;
     private ExchangeRatesParser parser;
     private String country;
     private String currencyCode;
-    private Banks banks;
+    private BankId bankId;
     private Date date;
 
-    public Bank(String country, Banks code, ExchangeRatesParser parser, boolean inMyCurrency) {
+    public Bank(String country, BankId code, ExchangeRatesParser parser, boolean inMyCurrency) {
         this.country = country;
-        banks = code;
+        bankId = code;
         this.currencyCode = code.getCurrencyCode();
         this.parser = parser;
         this.inMyCurrency = inMyCurrency;
     }
 
-    protected Bank(Parcel in) {
+    private Bank(Parcel in) {
         inMyCurrency = in.readByte() != 0;
         country = in.readString();
         currencyCode = in.readString();
-        banks = Banks.valueOf(in.readString());
-        date = new Date(in.readLong());
+        bankId = BankId.valueOf(in.readString());
+        long ms = in.readLong();
+        if (ms != -1L) {
+            date = new Date(ms);
+        } else {
+            date = null;
+        }
     }
 
     public static final Creator<Bank> CREATOR = new Creator<Bank>() {
@@ -46,7 +51,7 @@ public class Bank implements Comparable<Bank>, Parcelable {
         }
     };
 
-    public String getCurrencyCode() {
+    String getCurrencyCode() {
         return currencyCode;
     }
 
@@ -59,8 +64,8 @@ public class Bank implements Comparable<Bank>, Parcelable {
         return parser;
     }
 
-    public Banks getBanks() {
-        return banks;
+    public BankId getBankId() {
+        return bankId;
     }
 
     public Date getDate() {
@@ -87,7 +92,11 @@ public class Bank implements Comparable<Bank>, Parcelable {
         parcel.writeByte((byte) (inMyCurrency ? 1 : 0));
         parcel.writeString(country);
         parcel.writeString(currencyCode);
-        parcel.writeString(banks.name());
-        parcel.writeLong(date.getTime());
+        parcel.writeString(bankId.name());
+        if (date != null) {
+            parcel.writeLong(date.getTime());
+        } else {
+            parcel.writeLong(-1L);
+        }
     }
 }

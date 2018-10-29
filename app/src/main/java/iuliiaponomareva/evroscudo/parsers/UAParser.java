@@ -11,13 +11,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import iuliiaponomareva.evroscudo.Banks;
+import androidx.annotation.NonNull;
+import iuliiaponomareva.evroscudo.BankId;
 import iuliiaponomareva.evroscudo.Currency;
 
 
 public class UAParser extends ExchangeRatesXMLParser {
     private Date date;
 
+    @NonNull
     @Override
     String getURL() {
         return "http://bank.gov.ua/NBUStatService/v1/statdirectory/exchange";
@@ -25,14 +27,20 @@ public class UAParser extends ExchangeRatesXMLParser {
 
     @Override
     public Date getDate() {
-        return date;
+        if (date != null) {
+            return new Date(date.getTime());
+        } else {
+            return null;
+        }
     }
 
+    @NonNull
     @Override
     List<Currency> parseData(XmlPullParser parser) throws IOException, XmlPullParserException {
         List<Currency> currencies = new ArrayList<>();
         parser.next();
         parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
+
         parser.require(XmlPullParser.START_TAG, null, "exchange");
 
         while (parser.next() != XmlPullParser.END_TAG) {
@@ -42,8 +50,9 @@ public class UAParser extends ExchangeRatesXMLParser {
             String name = parser.getName();
             if (name.equals("currency")) {
                 Currency currency = parseCurrency(parser);
-                if (currency != null)
-                currencies.add(currency);
+                if (currency != null) {
+                    currencies.add(currency);
+                }
             } else {
                 skip(parser);
             }
@@ -51,7 +60,8 @@ public class UAParser extends ExchangeRatesXMLParser {
         return currencies;
     }
 
-    private Currency parseCurrency(XmlPullParser parser) throws IOException, XmlPullParserException {
+    private Currency parseCurrency(XmlPullParser parser)
+            throws IOException, XmlPullParserException {
         String bankRate = null;
         String code = null;
         int nominal = 1;
@@ -85,10 +95,11 @@ public class UAParser extends ExchangeRatesXMLParser {
 
         if ((bankRate != null) && (code != null)) {
             Currency currency = new Currency(code);
-            currency.setBankRate(bankRate, Banks.UA);
-            currency.setNominal(nominal, Banks.UA);
+            currency.setBankRate(bankRate, BankId.UA);
+            currency.setNominal(nominal, BankId.UA);
             return currency;
         }
         return null;
     }
 }
+

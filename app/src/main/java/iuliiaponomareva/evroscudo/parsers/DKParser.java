@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import iuliiaponomareva.evroscudo.Banks;
+import iuliiaponomareva.evroscudo.BankId;
 import iuliiaponomareva.evroscudo.Currency;
 
 public class DKParser extends ExchangeRatesXMLParser {
@@ -76,8 +76,8 @@ public class DKParser extends ExchangeRatesXMLParser {
         int nominal = 100;
         if ((bankRate != null) && (code != null) ) {
             Currency currency = new Currency(code);
-            currency.setBankRate(bankRate, Banks.DK);
-            currency.setNominal(nominal, Banks.DK);
+            currency.setBankRate(bankRate, BankId.DK);
+            currency.setNominal(nominal, BankId.DK);
             return currency;
         }
         return null;

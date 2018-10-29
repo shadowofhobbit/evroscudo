@@ -1,12 +1,12 @@
 package iuliiaponomareva.evroscudo;
 
 
-public enum Banks {
+public enum BankId {
     ECB("EUR"), CBR("RUB"), RBA("AUD"), CANADA("CAD"), UA("UAH"), KZ("KZT"), ISRAEL("ILS"), BY("BYR"),
-    DK("DKK"), CZ("CZK"), KG("KGS"), TJ("TJS");
+    DK("DKK"), CZ("CZK"), KG("KGS"), TJ("TJS"), UK("GBP"), Norges("NOK"), Sweden("SEK");
 
     private String currencyCode;
-    Banks(String code) {
+    BankId(String code) {
         this.currencyCode = code;
     }
     public String getCurrencyCode() {

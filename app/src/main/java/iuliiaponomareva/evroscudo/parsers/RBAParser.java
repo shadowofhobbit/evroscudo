@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import iuliiaponomareva.evroscudo.Banks;
+import iuliiaponomareva.evroscudo.BankId;
 import iuliiaponomareva.evroscudo.Currency;
 
 public class RBAParser extends ExchangeRatesXMLParser {
@@ -105,8 +105,8 @@ Currency curr = null;
         }
         if ((bankRate != null) && (code != null)) {
             Currency currency = new Currency(code);
-            currency.setBankRate(bankRate, Banks.RBA);
-            currency.setNominal(nominal, Banks.RBA);
+            currency.setBankRate(bankRate, BankId.RBA);
+            currency.setNominal(nominal, BankId.RBA);
             return currency;
         }
         return null;

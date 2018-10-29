@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import iuliiaponomareva.evroscudo.Banks;
+import iuliiaponomareva.evroscudo.BankId;
 import iuliiaponomareva.evroscudo.Currency;
 
 
@@ -20,7 +20,7 @@ public class CanadaParser extends ExchangeRatesXMLParser {
 
     @Override
     String getURL() {
-        return "http://www.bankofcanada.ca/stats/assets/rates_rss/noon/en_all.xml";
+        return "https://www.bankofcanada.ca/valet/fx_rss/";
     }
 
     @Override
@@ -87,8 +87,7 @@ public class CanadaParser extends ExchangeRatesXMLParser {
             String name = parser.getName();
             switch (name) {
                 case "cb:targetCurrency":
-                    String noonCode = parser.nextText();
-                    code = noonCode.substring(0, noonCode.indexOf("_NOON"));
+                    code = parser.nextText();
                     break;
                 case "cb:value":
                     bankRate = parser.nextText();
@@ -96,9 +95,7 @@ public class CanadaParser extends ExchangeRatesXMLParser {
                 case "cb:observationPeriod":
                     String unparsedDate = parser.nextText();
                     try {
-                        //Example:
-                        //2016-02-29T12:30:00-05:00
-                        date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZZ", Locale.CANADA).parse(unparsedDate);
+                        date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.CANADA).parse(unparsedDate);
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
@@ -110,8 +107,8 @@ public class CanadaParser extends ExchangeRatesXMLParser {
         }
         if ((bankRate != null) && (code != null)) {
             Currency currency = new Currency(code);
-            currency.setBankRate(bankRate, Banks.CANADA);
-            currency.setNominal(nominal, Banks.CANADA);
+            currency.setBankRate(bankRate, BankId.CANADA);
+            currency.setNominal(nominal, BankId.CANADA);
             return currency;
         }
         return null;

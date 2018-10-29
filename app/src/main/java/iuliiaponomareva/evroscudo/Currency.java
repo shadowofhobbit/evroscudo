@@ -9,8 +9,8 @@ import java.util.Map;
 
 public class Currency implements Parcelable {
     private String code;
-    private Map<Banks, String> bankRates = new HashMap<>(DisplayRatesActivity.BANK_COUNT);
-    private Map<Banks, Integer> nominals = new HashMap<>(DisplayRatesActivity.BANK_COUNT);
+    private Map<BankId, String> bankRates = new HashMap<>(DisplayRatesActivity.BANK_COUNT);
+    private Map<BankId, Integer> nominals = new HashMap<>(DisplayRatesActivity.BANK_COUNT);
 
     public Currency(String code) {
         this.code = code;
@@ -20,13 +20,13 @@ public class Currency implements Parcelable {
         code = in.readString();
         int size = in.readInt();
         for(int i = 0; i < size; i++){
-            Banks key = Banks.valueOf(in.readString());
+            BankId key = BankId.valueOf(in.readString());
             String value = in.readString();
             bankRates.put(key,value);
         }
         size = in.readInt();
         for(int i = 0; i < size; i++){
-            Banks key = Banks.valueOf(in.readString());
+            BankId key = BankId.valueOf(in.readString());
             int value = in.readInt();
             nominals.put(key,value);
         }
@@ -36,12 +36,12 @@ public class Currency implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(code);
         dest.writeInt(bankRates.size());
-        for (Map.Entry<Banks, String> entry : bankRates.entrySet()) {
+        for (Map.Entry<BankId, String> entry : bankRates.entrySet()) {
             dest.writeString(entry.getKey().name());
             dest.writeString(entry.getValue());
         }
         dest.writeInt(nominals.size());
-        for (Map.Entry<Banks, Integer> entry : nominals.entrySet()) {
+        for (Map.Entry<BankId, Integer> entry : nominals.entrySet()) {
             dest.writeString(entry.getKey().name());
             dest.writeInt(entry.getValue());
         }
@@ -68,31 +68,31 @@ public class Currency implements Parcelable {
         return code;
     }
 
-    public void setBankRate(String rate, Banks bank) {
+    public void setBankRate(String rate, BankId bank) {
         bankRates.put(bank, rate);
     }
 
-    public String getBankRate(Banks bank) {
+    public String getBankRate(BankId bank) {
         return bankRates.get(bank);
     }
 
-    public Map<Banks, String> getBankRates() {
+    public Map<BankId, String> getBankRates() {
         return Collections.unmodifiableMap(bankRates);
     }
 
-    void updateRates(Map<Banks, String> rates) {
+    void updateRates(Map<BankId, String> rates) {
         bankRates.putAll(rates);
     }
 
-    void updateNominals(Map<Banks, Integer> newNominals) {
+    void updateNominals(Map<BankId, Integer> newNominals) {
         nominals.putAll(newNominals);
     }
 
-    public void setNominal(int nominal, Banks bank) {
+    public void setNominal(int nominal, BankId bank) {
         nominals.put(bank, nominal);
     }
 
-    public int getNominal(Banks bank) {
+    public int getNominal(BankId bank) {
         Integer nominal = nominals.get(bank);
         if (nominal == null)
             return 1;
@@ -117,7 +117,7 @@ public class Currency implements Parcelable {
         return code != null ? code.hashCode() : 0;
     }
 
-    public Map<Banks, Integer> getNominals() {
+    public Map<BankId, Integer> getNominals() {
         return Collections.unmodifiableMap(nominals);
     }
 }

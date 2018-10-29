@@ -23,7 +23,7 @@ class DisplayRatesActivityTest {
         onView(withId(R.id.spinner2)).check(matches(isDisplayed()))
         onView(withId(R.id.dateView1)).check(matches(isDisplayed()))
         onView(withId(R.id.dateView2)).check(matches(isDisplayed()))
-        onView(withId(R.id.data_grid)).check(matches(isDisplayed()))
+        onView(withId(R.id.ratesView)).check(matches(isDisplayed()))
     }
 
     @Test

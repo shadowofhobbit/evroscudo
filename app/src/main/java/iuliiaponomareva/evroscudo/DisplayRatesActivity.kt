@@ -2,27 +2,32 @@ package iuliiaponomareva.evroscudo
 
 import android.content.Context
 import android.content.Intent
-import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import iuliiaponomareva.evroscudo.parsers.*
+import iuliiaponomareva.evroscudo.settings.SettingsActivity
 import kotlinx.android.synthetic.main.activity_display_rates.*
 import kotlinx.android.synthetic.main.toolbar.*
 import java.text.SimpleDateFormat
 import java.util.*
 
 class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
-    private lateinit var ratesAdapter: ArrayAdapter<Currency>
+    private lateinit var ratesAdapter: CurrencyAdapter
 
     private lateinit var adapter1: ArrayAdapter<Bank>
     private lateinit var adapter2: ArrayAdapter<Bank>
-    private val banks = HashMap<Banks, Bank>(BANK_COUNT)
+    private val banks = HashMap<BankId, Bank>(BANK_COUNT)
     private lateinit var currenciesKeeper: CurrenciesKeeper
 
     val firstBank: Bank
@@ -30,14 +35,6 @@ class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLi
 
     val secondBank: Bank
         get() = spinner2.selectedItem as Bank
-
-    private val isConnectedToNetwork: Boolean
-        get() {
-            val manager =
-                applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-            val networkInfo = manager.activeNetworkInfo
-            return networkInfo != null && networkInfo.isConnected
-        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,15 +51,14 @@ class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLi
     }
 
     private fun setUpListOfRates() {
-        val listview = findViewById<View>(R.id.data_grid) as ListView
-        ratesAdapter = CurrencyAdapter(this, R.id.list_item_layout)
-        listview.adapter = ratesAdapter
-
+        ratesView.layoutManager = LinearLayoutManager(this)
+        ratesAdapter = CurrencyAdapter(this)
+        ratesView.adapter = ratesAdapter
+        ratesView.setHasFixedSize(true)
         swipeRefreshLayout.setOnRefreshListener(this)
     }
 
     private fun setUpToolbar() {
-        val toolbar = findViewById<View>(R.id.my_toolbar) as Toolbar
         setSupportActionBar(toolbar)
         val banksList = ArrayList(banks.values)
         banksList.sort()
@@ -79,31 +75,37 @@ class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLi
     }
 
     private fun createBanks() {
-        val CBR = Bank(getString(R.string.cbr), Banks.CBR, CBRParser(), true)
-        val ECB = Bank(getString(R.string.ecb), Banks.ECB, ECBParser(), false)
-        val RBA = Bank(getString(R.string.rba), Banks.RBA, RBAParser(), false)
-        val CANADA = Bank(getString(R.string.bank_of_canada), Banks.CANADA, CanadaParser(), false)
-        val UKR = Bank(getString(R.string.ua), Banks.UA, UAParser(), true)
-        val KZ = Bank(getString(R.string.kz), Banks.KZ, KZParser(), true)
-        val IL = Bank(getString(R.string.IL), Banks.ISRAEL, IsraelParser(), true)
-        val BY = Bank(getString(R.string.BY), Banks.BY, BYParser(), true)
-        val DK = Bank(getString(R.string.DK), Banks.DK, DKParser(), true)
-        val CZ = Bank(getString(R.string.czech), Banks.CZ, CZParser(), true)
-        val KG = Bank(getString(R.string.KG), Banks.KG, KGParser(), true)
-        val TJ = Bank(getString(R.string.TJ), Banks.TJ, TJParser(), true)
+        val CBR = Bank(getString(R.string.cbr), BankId.CBR, CBRParser(), true)
+        val ECB = Bank(getString(R.string.ecb), BankId.ECB, ECBParser(), false)
+        val RBA = Bank(getString(R.string.rba), BankId.RBA, RBAParser(), false)
+        val CANADA = Bank(getString(R.string.bank_of_canada), BankId.CANADA, CanadaParser(), false)
+        val UKR = Bank(getString(R.string.ua), BankId.UA, UAParser(), true)
+        val KZ = Bank(getString(R.string.kz), BankId.KZ, KZParser(), true)
+        val IL = Bank(getString(R.string.IL), BankId.ISRAEL, IsraelParser(), true)
+        val BY = Bank(getString(R.string.BY), BankId.BY, BYParser(), true)
+        val DK = Bank(getString(R.string.DK), BankId.DK, DKParser(), true)
+        val CZ = Bank(getString(R.string.czech), BankId.CZ, CZParser(), true)
+        val KG = Bank(getString(R.string.KG), BankId.KG, KGParser(), true)
+        val TJ = Bank(getString(R.string.TJ), BankId.TJ, TJParser(), true)
+        val NO = Bank(getString(R.string.norges_bank), BankId.Norges, NorgesParser(), true)
+        val SE = Bank(getString(R.string.sweden), BankId.Sweden, SwedenParser(), true)
+        val UK = Bank(getString(R.string.uk), BankId.UK, EnglandParser(), false)
 
-        banks[CBR.banks] = CBR
-        banks[ECB.banks] = ECB
-        banks[RBA.banks] = RBA
-        banks[CANADA.banks] = CANADA
-        banks[UKR.banks] = UKR
-        banks[KZ.banks] = KZ
-        banks[IL.banks] = IL
-        banks[BY.banks] = BY
-        banks[DK.banks] = DK
-        banks[CZ.banks] = CZ
-        banks[KG.banks] = KG
-        banks[TJ.banks] = TJ
+        banks[CBR.bankId] = CBR
+        banks[ECB.bankId] = ECB
+        banks[RBA.bankId] = RBA
+        banks[CANADA.bankId] = CANADA
+        banks[UKR.bankId] = UKR
+        banks[KZ.bankId] = KZ
+        banks[IL.bankId] = IL
+        banks[BY.bankId] = BY
+        banks[DK.bankId] = DK
+        banks[CZ.bankId] = CZ
+        banks[KG.bankId] = KG
+        banks[TJ.bankId] = TJ
+        banks[NO.bankId] = NO
+        banks[SE.bankId] = SE
+        banks[UK.bankId] = UK
     }
 
     private fun setupSpinner(spinner: Spinner, adapter: ArrayAdapter<Bank>) {
@@ -112,7 +114,7 @@ class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLi
         spinner.adapter = adapter
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, pos: Int, id: Long) {
-                if (isConnectedToNetwork)
+                if (isConnectedToNetwork(this@DisplayRatesActivity))
                     RefreshRatesAsyncTask(this@DisplayRatesActivity).execute(adapter.getItem(pos))
                 else {
                     getRates()
@@ -173,33 +175,31 @@ class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLi
         val preferences = getSharedPreferences("evroscudo", Context.MODE_PRIVATE)
         val editor = preferences.edit()
         if (spinner1.selectedItem != null)
-            editor.putString("bank1", (spinner1.selectedItem as Bank).banks.name)
+            editor.putString("bank1", (spinner1.selectedItem as Bank).bankId.name)
         if (spinner2.selectedItem != null)
-            editor.putString("bank2", (spinner2.selectedItem as Bank).banks.name)
+            editor.putString("bank2", (spinner2.selectedItem as Bank).bankId.name)
         editor.apply()
     }
 
     private fun getSelectedBanks() {
         val preferences = getSharedPreferences("evroscudo", Context.MODE_PRIVATE)
-        val bank = preferences.getString("bank1", adapter1.getItem(0)!!.banks.name)
-        spinner1.setSelection(adapter1.getPosition(banks[Banks.valueOf(bank)]))
-        val bank2 = preferences.getString("bank2", adapter2.getItem(0)!!.banks.name)
-        spinner2.setSelection(adapter2.getPosition(banks[Banks.valueOf(bank2)]))
+        val bank = preferences.getString("bank1", adapter1.getItem(0)!!.bankId.name)
+        spinner1.setSelection(adapter1.getPosition(banks[BankId.valueOf(bank)]))
+        val bank2 = preferences.getString("bank2", adapter2.getItem(0)!!.bankId.name)
+        spinner2.setSelection(adapter2.getPosition(banks[BankId.valueOf(bank2)]))
 
     }
 
     fun setDates(data: HashMap<String, Date>) {
         for (s in data.keys) {
-            banks[Banks.valueOf(s)]?.setDate(data[s])
+            banks[BankId.valueOf(s)]?.setDate(data[s])
         }
         updateDates()
     }
 
     fun addCurrencies(currencies: Collection<Currency>) {
-        ratesAdapter.clear()
         currenciesKeeper.addAll(currencies)
-        ratesAdapter.addAll(currenciesKeeper.currencies)
-        ratesAdapter.notifyDataSetChanged()
+        ratesAdapter.set(currenciesKeeper.currencies)
     }
 
     fun updateDates() {
@@ -214,7 +214,7 @@ class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLi
     }
 
     override fun onRefresh() {
-        if (isConnectedToNetwork) {
+        if (isConnectedToNetwork(this)) {
             RefreshRatesAsyncTask(this@DisplayRatesActivity).execute(firstBank, secondBank)
         } else {
             Toast.makeText(
@@ -226,9 +226,7 @@ class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLi
     }
 
     fun getRates() {
-        ratesAdapter.clear()
-        ratesAdapter.addAll(currenciesKeeper.currencies)
-        ratesAdapter.notifyDataSetChanged()
+        ratesAdapter.set(currenciesKeeper.currencies)
         updateDates()
     }
 
@@ -240,7 +238,20 @@ class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLi
         InfoDialogFragment().show(supportFragmentManager, "info")
     }
 
-    companion object {
-        const val BANK_COUNT = 12
+    fun showSettings(item: MenuItem) {
+        val intent = Intent(this, SettingsActivity::class.java)
+        startActivity(intent)
     }
+
+    companion object {
+        const val BANK_COUNT = 15
+    }
+}
+
+class RatesViewModel : ViewModel() {
+    private lateinit var rates: MutableLiveData<List<Currency>>
+    fun getData() {
+
+    }
+
 }

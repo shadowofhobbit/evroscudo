@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import iuliiaponomareva.evroscudo.Banks;
+import iuliiaponomareva.evroscudo.BankId;
 import iuliiaponomareva.evroscudo.Currency;
 
 public class ECBParser extends ExchangeRatesXMLParser {
@@ -85,7 +85,7 @@ public class ECBParser extends ExchangeRatesXMLParser {
                 String code = parser.getAttributeValue(null, "currency");
                 String rate = parser.getAttributeValue(null, "rate");
                 Currency currency = new Currency(code);
-                currency.setBankRate(rate, Banks.ECB);
+                currency.setBankRate(rate, BankId.ECB);
                 currencies.add(currency);
                 parser.next();
             }

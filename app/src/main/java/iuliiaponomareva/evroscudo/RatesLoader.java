@@ -60,7 +60,7 @@ public class RatesLoader extends CursorLoader {
             String bank = cursor.getString(cursor.getColumnIndexOrThrow(RatesContract.Nominals.COLUMN_NAME_BANK));
             int nominal = cursor.getInt(cursor.getColumnIndexOrThrow(RatesContract.Nominals.COLUMN_NAME_NOMINAL));
             Currency currency = (currencies.get(code)!= null) ? currencies.get(code) : new Currency(code);
-            currency.setNominal(nominal, Banks.valueOf(bank));
+            currency.setNominal(nominal, BankId.valueOf(bank));
             currencies.put(code, currency);
             cursor.moveToNext();
         }
@@ -102,7 +102,7 @@ public class RatesLoader extends CursorLoader {
             String bank = cursor.getString(cursor.getColumnIndexOrThrow(RatesContract.ExchangeRate.COLUMN_NAME_BANK));
             String rate = cursor.getString(cursor.getColumnIndexOrThrow(RatesContract.ExchangeRate.COLUMN_NAME_RATE));
             Currency currency = (currencies.get(code)!= null) ? currencies.get(code) : new Currency(code);
-            currency.setBankRate(rate, Banks.valueOf(bank));
+            currency.setBankRate(rate, BankId.valueOf(bank));
             currencies.put(code, currency);
             cursor.moveToNext();
         }
