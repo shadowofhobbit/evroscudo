@@ -28,8 +28,7 @@ fun getInputStream(url: String): InputStream? {
     val request = Request.Builder().url(url).build()
     val response: Response
     response = getClient().newCall(request).execute()
-    val body = response.body()
-    return body?.byteStream()
+    return response.body?.byteStream()
 }
 
 fun isConnectedToNetwork(context: Context): Boolean {

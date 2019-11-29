@@ -1,9 +1,9 @@
-.gitignore
 *.iml
 .gradle
 /local.properties
-/.idea/workspace.xml
-/.idea/libraries
+/.idea/**
 .DS_Store
 /build
 /captures
+app/release/*
+/projectFilesBackup/*

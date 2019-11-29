@@ -30,6 +30,7 @@ class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLi
     private val banks = HashMap<BankId, Bank>(BANK_COUNT)
     private lateinit var currenciesKeeper: CurrenciesKeeper
 
+
     val firstBank: Bank
         get() = spinner1.selectedItem as Bank
 
@@ -184,9 +185,9 @@ class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLi
     private fun getSelectedBanks() {
         val preferences = getSharedPreferences("evroscudo", Context.MODE_PRIVATE)
         val bank = preferences.getString("bank1", adapter1.getItem(0)!!.bankId.name)
-        spinner1.setSelection(adapter1.getPosition(banks[BankId.valueOf(bank)]))
+        spinner1.setSelection(adapter1.getPosition(banks[BankId.valueOf(bank!!)]))
         val bank2 = preferences.getString("bank2", adapter2.getItem(0)!!.bankId.name)
-        spinner2.setSelection(adapter2.getPosition(banks[BankId.valueOf(bank2)]))
+        spinner2.setSelection(adapter2.getPosition(banks[BankId.valueOf(bank2!!)]))
 
     }
 

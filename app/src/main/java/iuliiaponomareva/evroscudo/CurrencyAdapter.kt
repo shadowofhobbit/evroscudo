@@ -60,7 +60,7 @@ class CurrencyAdapter(private val activity: DisplayRatesActivity) :
         if (TextUtils.isEmpty(rate))
             bankRateTextView.text = ""
         else {
-            val text = StringBuilder(rate)
+            val text = StringBuilder(rate!!)
             text.append(" ")
             if (bank.inMyCurrency) {
                 text.append(bank.currencyCode)
