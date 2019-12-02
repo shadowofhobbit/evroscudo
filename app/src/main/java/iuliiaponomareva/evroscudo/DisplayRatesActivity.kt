@@ -15,6 +15,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import iuliiaponomareva.evroscudo.parsers.*
 import iuliiaponomareva.evroscudo.settings.SettingsActivity
 import kotlinx.android.synthetic.main.activity_display_rates.*
@@ -29,6 +32,8 @@ class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLi
     private lateinit var adapter2: ArrayAdapter<Bank>
     private val banks = HashMap<BankId, Bank>(BANK_COUNT)
     private lateinit var currenciesKeeper: CurrenciesKeeper
+    private lateinit var ratesLocalDataSource: RatesLocalDataSource
+    private lateinit var disposable: CompositeDisposable
 
 
     val firstBank: Bank
@@ -44,6 +49,8 @@ class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLi
         currenciesKeeper = CurrenciesKeeper()
         setUpToolbar()
         setUpListOfRates()
+        ratesLocalDataSource = RatesLocalDataSource(this)
+        disposable = CompositeDisposable()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -115,9 +122,9 @@ class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLi
         spinner.adapter = adapter
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, pos: Int, id: Long) {
-                if (isConnectedToNetwork(this@DisplayRatesActivity))
-                    RefreshRatesAsyncTask(this@DisplayRatesActivity).execute(adapter.getItem(pos))
-                else {
+                if (isConnectedToNetwork(this@DisplayRatesActivity)) {
+                    refreshRates(firstBank, secondBank)
+                } else {
                     getRates()
                     Toast.makeText(
                         this@DisplayRatesActivity,
@@ -146,20 +153,9 @@ class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLi
 
     override fun onStop() {
         super.onStop()
-        val saveRatesIntent = Intent(this, SaveRatesIntentService::class.java)
-        saveRatesIntent.action = SaveRatesIntentService.ACTION_SAVE
-        val currencies = currenciesKeeper.currencies
-        saveRatesIntent.putExtra(
-            SaveRatesIntentService.EXTRA_CURRENCIES,
-            currencies.toTypedArray()
-        )
-        saveRatesIntent.putExtra(
-            SaveRatesIntentService.EXTRA_BANK,
-            arrayOf(firstBank, secondBank)
-        )
-        startService(saveRatesIntent)
-
+        disposable.clear()
     }
+
 
     override fun onPause() {
         super.onPause()
@@ -216,7 +212,7 @@ class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLi
 
     override fun onRefresh() {
         if (isConnectedToNetwork(this)) {
-            RefreshRatesAsyncTask(this@DisplayRatesActivity).execute(firstBank, secondBank)
+            refreshRates(firstBank, secondBank)
         } else {
             Toast.makeText(
                 this@DisplayRatesActivity,
@@ -247,7 +243,33 @@ class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLi
     companion object {
         const val BANK_COUNT = 15
     }
+
+    private fun refreshRates(vararg banks: Bank) {
+
+        for (bank in banks) {
+            val parser = bank.parser
+            disposable.add(parser.parseRates()
+                .doOnNext {
+                    ratesLocalDataSource.save(it.currencies, bank)
+                }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { data ->
+                    bank.date = data.date;
+                    addCurrencies(data.currencies)
+                    updateDates()
+                    finishRefreshing()
+                })
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        disposable.dispose()
+    }
 }
+
+class RatesData(val currencies: MutableList<Currency>, val date: Date?)
 
 class RatesViewModel : ViewModel() {
     private lateinit var rates: MutableLiveData<List<Currency>>

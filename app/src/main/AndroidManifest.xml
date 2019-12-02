@@ -20,12 +20,6 @@
         </activity>
         <activity android:name=".settings.SettingsActivity" />
 
-        <service
-            android:name=".SaveRatesIntentService"
-            android:exported="false" />
-        <service
-            android:name=".DownloadRatesService"
-            android:exported="false" />
     </application>
 
 </manifest>
