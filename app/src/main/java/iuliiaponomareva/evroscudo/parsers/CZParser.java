@@ -38,8 +38,8 @@ public class CZParser extends ExchangeRatesParser {
             String dateString = in.nextLine();
             try {
                 // Example:
-                // 09.Mar 2016 #48
-                date = new SimpleDateFormat("dd.MMM yyyy", Locale.US).parse(dateString);
+                // 09 Mar 2016 #48
+                date = new SimpleDateFormat("dd MMM yyyy", Locale.US).parse(dateString);
             } catch (ParseException e) {
                 e.printStackTrace();
             }
