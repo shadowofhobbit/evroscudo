@@ -6,9 +6,10 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import java.util.*
+import javax.inject.Inject
 import kotlin.collections.HashMap
 
-class RatesLocalDataSource(private val context: Context) {
+class RatesLocalDataSource @Inject constructor(private val context: Context) {
 
     fun save(
         currencies: List<Currency>,

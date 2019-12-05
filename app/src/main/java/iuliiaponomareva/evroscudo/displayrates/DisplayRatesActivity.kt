@@ -23,6 +23,7 @@ import kotlinx.android.synthetic.main.activity_display_rates.*
 import kotlinx.android.synthetic.main.toolbar.*
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
 class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener, DisplayRatesContract.View {
     private lateinit var ratesAdapter: CurrencyAdapter
@@ -33,8 +34,7 @@ class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLi
         BANK_COUNT
     )
     private lateinit var currenciesKeeper: CurrenciesKeeper
-    private lateinit var ratesLocalDataSource: RatesLocalDataSource
-    private lateinit var presenter: DisplayRatesContract.Presenter
+    @Inject lateinit var presenter: DisplayRatesContract.Presenter
 
 
     val firstBank: Bank
@@ -44,15 +44,13 @@ class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLi
         get() = spinner2.selectedItem as Bank
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        (application as App).appComponent.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_display_rates)
-        presenter = DisplayRatesPresenter(DisplayRatesModel(RatesLocalDataSource(applicationContext!!)))
         createBanks()
         currenciesKeeper = CurrenciesKeeper()
         setUpToolbar()
         setUpListOfRates()
-        ratesLocalDataSource =
-            RatesLocalDataSource(this)
         presenter.attachView(this)
     }
 

@@ -3,8 +3,9 @@ package iuliiaponomareva.evroscudo.displayrates
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import iuliiaponomareva.evroscudo.Bank
+import javax.inject.Inject
 
-class DisplayRatesPresenter(private val model: DisplayRatesContract.Model) :
+class DisplayRatesPresenter @Inject constructor(private val model: DisplayRatesContract.Model) :
     DisplayRatesContract.Presenter {
     private var view: DisplayRatesContract.View? = null
     private var compositeDisposable = CompositeDisposable()
