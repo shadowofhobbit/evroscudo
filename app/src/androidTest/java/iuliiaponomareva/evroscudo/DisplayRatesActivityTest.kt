@@ -8,6 +8,7 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.rule.ActivityTestRule
 import androidx.test.runner.AndroidJUnit4
+import iuliiaponomareva.evroscudo.displayrates.DisplayRatesActivity
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -15,7 +16,8 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class DisplayRatesActivityTest {
     @get:Rule
-    val rule = ActivityTestRule<DisplayRatesActivity>(DisplayRatesActivity::class.java)
+    val rule = ActivityTestRule<DisplayRatesActivity>(
+        DisplayRatesActivity::class.java)
 
     @Test
     fun viewsAreShown() {

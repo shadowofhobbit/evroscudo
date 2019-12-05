@@ -1,4 +1,4 @@
-package iuliiaponomareva.evroscudo
+package iuliiaponomareva.evroscudo.displayrates
 
 import android.content.Context
 import android.content.Intent
@@ -15,9 +15,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
+import iuliiaponomareva.evroscudo.*
+import iuliiaponomareva.evroscudo.Currency
 import iuliiaponomareva.evroscudo.parsers.*
 import iuliiaponomareva.evroscudo.settings.SettingsActivity
 import kotlinx.android.synthetic.main.activity_display_rates.*
@@ -25,15 +24,17 @@ import kotlinx.android.synthetic.main.toolbar.*
 import java.text.SimpleDateFormat
 import java.util.*
 
-class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener {
+class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener, DisplayRatesContract.View {
     private lateinit var ratesAdapter: CurrencyAdapter
 
     private lateinit var adapter1: ArrayAdapter<Bank>
     private lateinit var adapter2: ArrayAdapter<Bank>
-    private val banks = HashMap<BankId, Bank>(BANK_COUNT)
+    private val banks = HashMap<BankId, Bank>(
+        BANK_COUNT
+    )
     private lateinit var currenciesKeeper: CurrenciesKeeper
     private lateinit var ratesLocalDataSource: RatesLocalDataSource
-    private lateinit var disposable: CompositeDisposable
+    private lateinit var presenter: DisplayRatesContract.Presenter
 
 
     val firstBank: Bank
@@ -45,12 +46,14 @@ class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_display_rates)
+        presenter = DisplayRatesPresenter(DisplayRatesModel(RatesLocalDataSource(applicationContext!!)))
         createBanks()
         currenciesKeeper = CurrenciesKeeper()
         setUpToolbar()
         setUpListOfRates()
-        ratesLocalDataSource = RatesLocalDataSource(this)
-        disposable = CompositeDisposable()
+        ratesLocalDataSource =
+            RatesLocalDataSource(this)
+        presenter.attachView(this)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -83,21 +86,96 @@ class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLi
     }
 
     private fun createBanks() {
-        val CBR = Bank(getString(R.string.cbr), BankId.CBR, CBRParser(), true)
-        val ECB = Bank(getString(R.string.ecb), BankId.ECB, ECBParser(), false)
-        val RBA = Bank(getString(R.string.rba), BankId.RBA, RBAParser(), false)
-        val CANADA = Bank(getString(R.string.bank_of_canada), BankId.CANADA, CanadaParser(), false)
-        val UKR = Bank(getString(R.string.ua), BankId.UA, UAParser(), true)
-        val KZ = Bank(getString(R.string.kz), BankId.KZ, KZParser(), true)
-        val IL = Bank(getString(R.string.IL), BankId.ISRAEL, IsraelParser(), true)
-        val BY = Bank(getString(R.string.BY), BankId.BY, BYParser(), true)
-        val DK = Bank(getString(R.string.DK), BankId.DK, DKParser(), true)
-        val CZ = Bank(getString(R.string.czech), BankId.CZ, CZParser(), true)
-        val KG = Bank(getString(R.string.KG), BankId.KG, KGParser(), true)
-        val TJ = Bank(getString(R.string.TJ), BankId.TJ, TJParser(), true)
-        val NO = Bank(getString(R.string.norges_bank), BankId.Norges, NorgesParser(), true)
-        val SE = Bank(getString(R.string.sweden), BankId.Sweden, SwedenParser(), true)
-        val UK = Bank(getString(R.string.uk), BankId.UK, EnglandParser(), false)
+        val CBR = Bank(
+            getString(R.string.cbr),
+            BankId.CBR,
+            CBRParser(),
+            true
+        )
+        val ECB = Bank(
+            getString(R.string.ecb),
+            BankId.ECB,
+            ECBParser(),
+            false
+        )
+        val RBA = Bank(
+            getString(R.string.rba),
+            BankId.RBA,
+            RBAParser(),
+            false
+        )
+        val CANADA = Bank(
+            getString(R.string.bank_of_canada),
+            BankId.CANADA,
+            CanadaParser(),
+            false
+        )
+        val UKR = Bank(
+            getString(R.string.ua),
+            BankId.UA,
+            UAParser(),
+            true
+        )
+        val KZ = Bank(
+            getString(R.string.kz),
+            BankId.KZ,
+            KZParser(),
+            true
+        )
+        val IL = Bank(
+            getString(R.string.IL),
+            BankId.ISRAEL,
+            IsraelParser(),
+            true
+        )
+        val BY = Bank(
+            getString(R.string.BY),
+            BankId.BY,
+            BYParser(),
+            true
+        )
+        val DK = Bank(
+            getString(R.string.DK),
+            BankId.DK,
+            DKParser(),
+            true
+        )
+        val CZ = Bank(
+            getString(R.string.czech),
+            BankId.CZ,
+            CZParser(),
+            true
+        )
+        val KG = Bank(
+            getString(R.string.KG),
+            BankId.KG,
+            KGParser(),
+            true
+        )
+        val TJ = Bank(
+            getString(R.string.TJ),
+            BankId.TJ,
+            TJParser(),
+            true
+        )
+        val NO = Bank(
+            getString(R.string.norges_bank),
+            BankId.Norges,
+            NorgesParser(),
+            true
+        )
+        val SE = Bank(
+            getString(R.string.sweden),
+            BankId.Sweden,
+            SwedenParser(),
+            true
+        )
+        val UK = Bank(
+            getString(R.string.uk),
+            BankId.UK,
+            EnglandParser(),
+            false
+        )
 
         banks[CBR.bankId] = CBR
         banks[ECB.bankId] = ECB
@@ -122,15 +200,8 @@ class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLi
         spinner.adapter = adapter
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, pos: Int, id: Long) {
-                if (isConnectedToNetwork(this@DisplayRatesActivity)) {
-                    refreshRates(firstBank, secondBank)
-                } else {
-                    getRates()
-                    Toast.makeText(
-                        this@DisplayRatesActivity,
-                        R.string.no_internet_connection, Toast.LENGTH_SHORT
-                    ).show()
-                }
+
+                presenter.onBankSelected(adapter.getItem(pos) as Bank)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
@@ -153,7 +224,7 @@ class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLi
 
     override fun onStop() {
         super.onStop()
-        disposable.clear()
+        presenter.leaveView()
     }
 
 
@@ -189,7 +260,7 @@ class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLi
 
     fun setDates(data: HashMap<String, Date>) {
         for (s in data.keys) {
-            banks[BankId.valueOf(s)]?.setDate(data[s])
+            banks[BankId.valueOf(s)]?.date = data[s]
         }
         updateDates()
     }
@@ -211,28 +282,47 @@ class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLi
     }
 
     override fun onRefresh() {
-        if (isConnectedToNetwork(this)) {
-            refreshRates(firstBank, secondBank)
-        } else {
-            Toast.makeText(
-                this@DisplayRatesActivity,
-                R.string.no_internet_connection, Toast.LENGTH_SHORT
-            ).show()
-            finishRefreshing()
-        }
+        presenter.onRefresh(firstBank, secondBank)
     }
 
-    fun getRates() {
+    override fun getRatesFromCache() {
         ratesAdapter.set(currenciesKeeper.currencies)
         updateDates()
     }
 
-    fun finishRefreshing() {
+    override fun isConnectedToNetwork(): Boolean = isConnectedToNetwork(this)
+
+    override fun displayNoInternet() {
+        Toast.makeText(
+            this@DisplayRatesActivity,
+            R.string.no_internet_connection, Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    override fun finishRefreshing() {
         swipeRefreshLayout.isRefreshing = false
     }
 
+    override fun displayInfo() {
+        InfoDialogFragment()
+            .show(supportFragmentManager, "info")
+    }
+
+    override fun displaySettings() {
+        val intent = Intent(this, SettingsActivity::class.java)
+        startActivity(intent)
+    }
+
+    override fun displayError() {
+        Toast.makeText(
+            this@DisplayRatesActivity,
+            "Ошибка", Toast.LENGTH_SHORT
+        ).show()
+    }
+
     fun showInfo(item: MenuItem) {
-        InfoDialogFragment().show(supportFragmentManager, "info")
+        InfoDialogFragment()
+            .show(supportFragmentManager, "info")
     }
 
     fun showSettings(item: MenuItem) {
@@ -244,32 +334,19 @@ class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLi
         const val BANK_COUNT = 15
     }
 
-    private fun refreshRates(vararg banks: Bank) {
-
-        for (bank in banks) {
-            val parser = bank.parser
-            disposable.add(parser.parseRates()
-                .doOnNext {
-                    ratesLocalDataSource.save(it.currencies, bank)
-                }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { data ->
-                    bank.date = data.date;
-                    addCurrencies(data.currencies)
-                    updateDates()
-                    finishRefreshing()
-                })
-        }
-    }
-
     override fun onDestroy() {
         super.onDestroy()
-        disposable.dispose()
+        presenter.detachView()
+    }
+
+    override fun displayData(bank: Bank, data: RatesData) {
+        bank.date = data.date
+        addCurrencies(data.currencies)
+        updateDates()
     }
 }
 
-class RatesData(val currencies: MutableList<Currency>, val date: Date?)
+data class RatesData(val currencies: MutableList<Currency>, val date: Date?)
 
 class RatesViewModel : ViewModel() {
     private lateinit var rates: MutableLiveData<List<Currency>>

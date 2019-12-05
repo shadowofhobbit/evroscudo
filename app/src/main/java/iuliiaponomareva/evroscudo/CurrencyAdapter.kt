@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
+import iuliiaponomareva.evroscudo.displayrates.DisplayRatesActivity
 import java.util.*
 
 

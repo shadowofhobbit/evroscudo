@@ -9,13 +9,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import iuliiaponomareva.evroscudo.displayrates.DisplayRatesActivity;
+
 
 public class LoadRatesTask extends AsyncTask<Void, Void, Void> {
     private DisplayRatesActivity activity;
     private HashMap<String, Date> data = new HashMap<>();
     private CurrenciesKeeper keeper;
     private Map<String, Currency> currencies = new HashMap<>();
-    LoadRatesTask(DisplayRatesActivity activity) {
+    public LoadRatesTask(DisplayRatesActivity activity) {
         this.activity = activity;
     }
 
@@ -110,7 +112,7 @@ public class LoadRatesTask extends AsyncTask<Void, Void, Void> {
     protected void onPostExecute(Void aVoid) {
         activity.setDates(data);
         activity.setKeeper(keeper);
-        activity.getRates();
+        activity.getRatesFromCache();
 
     }
 }

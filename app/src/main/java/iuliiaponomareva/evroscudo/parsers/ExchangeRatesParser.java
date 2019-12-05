@@ -10,7 +10,7 @@ import java.util.concurrent.Callable;
 import io.reactivex.Observable;
 import iuliiaponomareva.evroscudo.Currency;
 import iuliiaponomareva.evroscudo.HttpUtilsKt;
-import iuliiaponomareva.evroscudo.RatesData;
+import iuliiaponomareva.evroscudo.displayrates.RatesData;
 
 public abstract class ExchangeRatesParser {
     public abstract Date getDate();

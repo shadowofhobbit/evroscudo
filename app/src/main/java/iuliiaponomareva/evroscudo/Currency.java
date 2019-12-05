@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import iuliiaponomareva.evroscudo.displayrates.DisplayRatesActivity;
+
 public class Currency implements Parcelable {
     private String code;
     private Map<BankId, String> bankRates = new HashMap<>(DisplayRatesActivity.BANK_COUNT);
@@ -108,7 +110,7 @@ public class Currency implements Parcelable {
 
         Currency currency = (Currency) o;
 
-        return !(code != null ? !code.equals(currency.code) : currency.code != null);
+        return (code != null ? code.equals(currency.code) : currency.code == null);
 
     }
 
