@@ -1,6 +1,9 @@
 package iuliiaponomareva.evroscudo.parsers;
 
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -13,8 +16,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import iuliiaponomareva.evroscudo.BankId;
 import iuliiaponomareva.evroscudo.Currency;
 import okhttp3.MediaType;
@@ -73,7 +74,11 @@ public class SwedenParser extends ExchangeRatesXMLParser {
 
     @Override
     public Date getDate() {
-        return new Date(date.getTime());
+        if (date != null) {
+            return new Date(date.getTime());
+        } else {
+            return null;
+        }
     }
 
     @Override
