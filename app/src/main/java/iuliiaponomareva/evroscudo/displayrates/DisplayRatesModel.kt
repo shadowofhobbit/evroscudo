@@ -14,7 +14,9 @@ class DisplayRatesModel @Inject constructor(private val ratesLocalDataSource: Ra
         val parser = bank.parser
         return parser.parseRates()
             .doOnNext {
-                ratesLocalDataSource.save(it.currencies, bank)
+                if (it.currencies.isNotEmpty()) {
+                    ratesLocalDataSource.save(it.currencies, bank)
+                }
             }
             .subscribeOn(Schedulers.io())
 
