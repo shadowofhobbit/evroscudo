@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import iuliiaponomareva.evroscudo.*
 import iuliiaponomareva.evroscudo.Currency
+import iuliiaponomareva.evroscudo.info.InfoDialogFragment
 import iuliiaponomareva.evroscudo.parsers.*
 import iuliiaponomareva.evroscudo.settings.SettingsActivity
 import kotlinx.android.synthetic.main.activity_display_rates.*
@@ -61,7 +62,8 @@ class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLi
 
     private fun setUpListOfRates() {
         ratesView.layoutManager = LinearLayoutManager(this)
-        ratesAdapter = CurrencyAdapter(this)
+        ratesAdapter =
+            CurrencyAdapter(this)
         ratesView.adapter = ratesAdapter
         ratesView.setHasFixedSize(true)
         swipeRefreshLayout.setOnRefreshListener(this)
@@ -263,12 +265,12 @@ class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLi
         updateDates()
     }
 
-    fun addCurrencies(currencies: Collection<Currency>) {
+    private fun addCurrencies(currencies: Collection<Currency>) {
         currenciesKeeper.addAll(currencies)
         ratesAdapter.set(currenciesKeeper.currencies)
     }
 
-    fun updateDates() {
+    private fun updateDates() {
         val date1 = firstBank.date
         val date2 = secondBank.date
         dateView1.text = formatDate(date1)

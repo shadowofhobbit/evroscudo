@@ -12,7 +12,7 @@ import java.util.Locale;
 import iuliiaponomareva.evroscudo.parsers.ExchangeRatesParser;
 
 public class Bank implements Comparable<Bank>, Parcelable {
-    boolean inMyCurrency;
+    private boolean inMyCurrency;
     private ExchangeRatesParser parser;
     private String country;
     private String currencyCode;
@@ -52,8 +52,12 @@ public class Bank implements Comparable<Bank>, Parcelable {
         }
     };
 
-    String getCurrencyCode() {
+    public String getCurrencyCode() {
         return currencyCode;
+    }
+
+    public boolean isInMyCurrency() {
+        return inMyCurrency;
     }
 
     @Override

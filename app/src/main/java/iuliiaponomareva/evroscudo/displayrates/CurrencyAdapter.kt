@@ -1,4 +1,4 @@
-package iuliiaponomareva.evroscudo
+package iuliiaponomareva.evroscudo.displayrates
 
 import android.text.TextUtils
 import android.view.LayoutInflater
@@ -7,7 +7,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.RecyclerView
-import iuliiaponomareva.evroscudo.displayrates.DisplayRatesActivity
+import iuliiaponomareva.evroscudo.Bank
+import iuliiaponomareva.evroscudo.Currency
+import iuliiaponomareva.evroscudo.R
+import kotlinx.android.synthetic.main.list_item.view.*
 import java.util.*
 
 
@@ -17,7 +20,9 @@ class CurrencyAdapter(private val activity: DisplayRatesActivity) :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CurrencyViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item, parent, false)
-        return CurrencyViewHolder(view)
+        return CurrencyViewHolder(
+            view
+        )
     }
 
     override fun onBindViewHolder(holder: CurrencyViewHolder, position: Int) {
@@ -63,7 +68,7 @@ class CurrencyAdapter(private val activity: DisplayRatesActivity) :
         else {
             val text = StringBuilder(rate!!)
             text.append(" ")
-            if (bank.inMyCurrency) {
+            if (bank.isInMyCurrency) {
                 text.append(bank.currencyCode)
                 text.append(activity.getString(R.string.`is`))
                 text.append(rates[position].getNominal(bank.bankId))
@@ -78,14 +83,9 @@ class CurrencyAdapter(private val activity: DisplayRatesActivity) :
     }
 
     class CurrencyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var codeTextView: TextView
-        var bankRateTextView: TextView
-        var bankRateTextView2: TextView
+        var codeTextView: TextView = itemView.currencyCodeView
+        var bankRateTextView: TextView = itemView.rateView
+        var bankRateTextView2: TextView = itemView.rate2View
 
-        init {
-            codeTextView = itemView.findViewById(R.id.currency_code)
-            bankRateTextView = itemView.findViewById(R.id.bank_rate)
-            bankRateTextView2 = itemView.findViewById(R.id.bank_2_rate)
-        }
     }
 }

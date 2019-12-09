@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import iuliiaponomareva.evroscudo.db.RatesContract;
+import iuliiaponomareva.evroscudo.db.RatesDBHelper;
 import iuliiaponomareva.evroscudo.displayrates.DisplayRatesActivity;
 
 

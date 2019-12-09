@@ -1,10 +1,14 @@
-package iuliiaponomareva.evroscudo
+package iuliiaponomareva.evroscudo.db
 
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import iuliiaponomareva.evroscudo.Bank
+import iuliiaponomareva.evroscudo.BankId
+import iuliiaponomareva.evroscudo.CurrenciesKeeper
+import iuliiaponomareva.evroscudo.Currency
 import java.util.*
 import javax.inject.Inject
 import kotlin.collections.HashMap
@@ -15,7 +19,8 @@ class RatesLocalDataSource @Inject constructor(private val context: Context) {
         currencies: List<Currency>,
         bank: Bank
     ) {
-        val helper: SQLiteOpenHelper = RatesDBHelper(context)
+        val helper: SQLiteOpenHelper =
+            RatesDBHelper(context)
         var database: SQLiteDatabase? = null
         try {
             database = helper.writableDatabase
@@ -33,9 +38,11 @@ class RatesLocalDataSource @Inject constructor(private val context: Context) {
                 database.insert(RatesContract.Dates.TABLE_NAME, null, values)
             }
 
-            database.delete(RatesContract.ExchangeRate.TABLE_NAME, RatesContract.ExchangeRate.COLUMN_NAME_BANK + " == ?",
+            database.delete(
+                RatesContract.ExchangeRate.TABLE_NAME, RatesContract.ExchangeRate.COLUMN_NAME_BANK + " == ?",
                 arrayOf(bank.bankId.name))
-            database.delete(RatesContract.Nominals.TABLE_NAME,
+            database.delete(
+                RatesContract.Nominals.TABLE_NAME,
                 RatesContract.Nominals.COLUMN_NAME_BANK  + " == ?", arrayOf(bank.bankId.name))
             for (currency in currencies) {
                 for ((key, value) in currency.bankRates) {
@@ -68,7 +75,8 @@ class RatesLocalDataSource @Inject constructor(private val context: Context) {
     fun load() {
         var keeper: CurrenciesKeeper? = null
         val currencies = HashMap<String, Currency>()
-        val helper: SQLiteOpenHelper = RatesDBHelper(context)
+        val helper: SQLiteOpenHelper =
+            RatesDBHelper(context)
         var database: SQLiteDatabase? = null
         try {
             database = helper.readableDatabase
@@ -102,7 +110,9 @@ class RatesLocalDataSource @Inject constructor(private val context: Context) {
                 cursor.getString(cursor.getColumnIndexOrThrow(RatesContract.Nominals.COLUMN_NAME_BANK))
             val nominal =
                 cursor.getInt(cursor.getColumnIndexOrThrow(RatesContract.Nominals.COLUMN_NAME_NOMINAL))
-            val currency: Currency = currencies[code] ?: Currency(code)
+            val currency: Currency = currencies[code] ?: Currency(
+                code
+            )
             currency.setNominal(nominal, BankId.valueOf(bank))
             currencies[code] = currency
             cursor.moveToNext()
@@ -151,7 +161,9 @@ class RatesLocalDataSource @Inject constructor(private val context: Context) {
                 cursor.getString(cursor.getColumnIndexOrThrow(RatesContract.ExchangeRate.COLUMN_NAME_BANK))
             val rate =
                 cursor.getString(cursor.getColumnIndexOrThrow(RatesContract.ExchangeRate.COLUMN_NAME_RATE))
-            val currency: Currency = currencies[code] ?: Currency(code)
+            val currency: Currency = currencies[code] ?: Currency(
+                code
+            )
             currency.setBankRate(rate, BankId.valueOf(bank))
             currencies[code] = currency
             cursor.moveToNext()

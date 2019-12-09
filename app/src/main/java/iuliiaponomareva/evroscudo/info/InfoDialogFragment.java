@@ -1,4 +1,4 @@
-package iuliiaponomareva.evroscudo;
+package iuliiaponomareva.evroscudo.info;
 
 
 import android.app.Dialog;
@@ -8,6 +8,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
+
+import iuliiaponomareva.evroscudo.R;
 
 
 public class InfoDialogFragment extends DialogFragment {

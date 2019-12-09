@@ -1,4 +1,4 @@
-package iuliiaponomareva.evroscudo;
+package iuliiaponomareva.evroscudo.db;
 
 import android.provider.BaseColumns;
 

@@ -3,7 +3,7 @@ package iuliiaponomareva.evroscudo.displayrates
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 import iuliiaponomareva.evroscudo.Bank
-import iuliiaponomareva.evroscudo.RatesLocalDataSource
+import iuliiaponomareva.evroscudo.db.RatesLocalDataSource
 import javax.inject.Inject
 
 class DisplayRatesModel @Inject constructor(private val ratesLocalDataSource: RatesLocalDataSource) :
