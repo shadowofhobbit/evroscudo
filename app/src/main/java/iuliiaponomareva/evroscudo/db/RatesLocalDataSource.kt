@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import iuliiaponomareva.evroscudo.Bank
 import iuliiaponomareva.evroscudo.BankId
-import iuliiaponomareva.evroscudo.CurrenciesKeeper
 import iuliiaponomareva.evroscudo.Currency
 import java.util.*
 import javax.inject.Inject
@@ -72,23 +71,34 @@ class RatesLocalDataSource @Inject constructor(private val context: Context) {
         }
     }
 
-    fun load() {
-        var keeper: CurrenciesKeeper? = null
+    fun loadRates(): Map<String, Currency> {
         val currencies = HashMap<String, Currency>()
         val helper: SQLiteOpenHelper =
             RatesDBHelper(context)
         var database: SQLiteDatabase? = null
         try {
             database = helper.readableDatabase
-            val data = HashMap<String, Date>()
-            readDates(database, data)
             readRates(database, currencies)
             readNominals(database, currencies)
-            keeper = CurrenciesKeeper(currencies)
         } finally {
             database?.close()
         }
+        return currencies
 
+    }
+
+    fun loadDates(): HashMap<BankId, Date> {
+        val helper: SQLiteOpenHelper =
+            RatesDBHelper(context)
+        var database: SQLiteDatabase? = null
+        val dates = HashMap<BankId, Date>()
+        try {
+            database = helper.readableDatabase
+            readDates(database, dates)
+        } finally {
+            database?.close()
+        }
+        return dates
     }
 
     private fun readNominals(database: SQLiteDatabase, currencies: MutableMap<String, Currency>) {
@@ -120,7 +130,7 @@ class RatesLocalDataSource @Inject constructor(private val context: Context) {
         cursor.close()
     }
 
-    private fun readDates(database: SQLiteDatabase, data: MutableMap<String, Date>) {
+    private fun readDates(database: SQLiteDatabase, data: MutableMap<BankId, Date>) {
         val cursor: Cursor
         val projection = arrayOf(
             RatesContract.Dates.COLUMN_NAME_BANK,
@@ -136,7 +146,7 @@ class RatesLocalDataSource @Inject constructor(private val context: Context) {
                 Date(cursor.getLong(cursor.getColumnIndexOrThrow(RatesContract.Dates.COLUMN_NAME_DATE)))
             val bank =
                 cursor.getString(cursor.getColumnIndexOrThrow(RatesContract.Dates.COLUMN_NAME_BANK))
-            data[bank] = date
+            data[BankId.valueOf(bank)] = date
             cursor.moveToNext()
         }
         cursor.close()

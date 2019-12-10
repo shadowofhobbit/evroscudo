@@ -34,11 +34,28 @@ class DisplayRatesPresenter @Inject constructor(private val model: DisplayRatesC
                 )
 
             } else {
-                getRatesFromCache()
+                view?.displayData(bank, model.getRatesFromCache(bank))
                 displayNoInternet()
             }
         }
 
+    }
+
+    override fun enterView() {
+        compositeDisposable.add(model.getRatesFromDb()
+            .observeOn(scheduler)
+            .subscribe ({ data ->
+                view?.displayCurrencies(data)
+            }, {
+                view?.displayError()
+            }))
+        compositeDisposable.add(model.getDatesFromDb()
+            .observeOn(scheduler)
+            .subscribe ({ dates ->
+                view?.setDates(dates)
+            }, {
+                view?.displayError()
+            }))
     }
 
     override fun onRefresh(firstBank: Bank, secondBank: Bank) {

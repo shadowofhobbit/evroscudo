@@ -82,11 +82,11 @@ public class Currency implements Parcelable {
         return Collections.unmodifiableMap(bankRates);
     }
 
-    void updateRates(Map<BankId, String> rates) {
+    public void updateRates(Map<BankId, String> rates) {
         bankRates.putAll(rates);
     }
 
-    void updateNominals(Map<BankId, Integer> newNominals) {
+    public void updateNominals(Map<BankId, Integer> newNominals) {
         nominals.putAll(newNominals);
     }
 

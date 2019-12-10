@@ -14,11 +14,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import iuliiaponomareva.evroscudo.*
 import iuliiaponomareva.evroscudo.Currency
 import iuliiaponomareva.evroscudo.info.InfoDialogFragment
-import iuliiaponomareva.evroscudo.parsers.*
 import iuliiaponomareva.evroscudo.settings.SettingsActivity
 import kotlinx.android.synthetic.main.activity_display_rates.*
 import kotlinx.android.synthetic.main.toolbar.*
@@ -26,15 +24,12 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
-class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshListener, DisplayRatesContract.View {
+class DisplayRatesActivity : AppCompatActivity(), DisplayRatesContract.View {
     private lateinit var ratesAdapter: CurrencyAdapter
 
     private lateinit var adapter1: ArrayAdapter<Bank>
     private lateinit var adapter2: ArrayAdapter<Bank>
-    private val banks = HashMap<BankId, Bank>(
-        BANK_COUNT
-    )
-    private lateinit var currenciesKeeper: CurrenciesKeeper
+    @Inject lateinit var banks: HashMap<BankId, Bank>
     @Inject lateinit var presenter: DisplayRatesContract.Presenter
 
 
@@ -48,8 +43,6 @@ class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLi
         (application as App).appComponent.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_display_rates)
-        createBanks()
-        currenciesKeeper = CurrenciesKeeper()
         setUpToolbar()
         setUpListOfRates()
         presenter.attachView(this)
@@ -66,7 +59,7 @@ class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLi
             CurrencyAdapter(this)
         ratesView.adapter = ratesAdapter
         ratesView.setHasFixedSize(true)
-        swipeRefreshLayout.setOnRefreshListener(this)
+        swipeRefreshLayout.setOnRefreshListener{presenter.onRefresh(firstBank, secondBank)}
     }
 
     private fun setUpToolbar() {
@@ -83,115 +76,6 @@ class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLi
             banksList
         )
         setupSpinner(spinner2, adapter2)
-    }
-
-    private fun createBanks() {
-        val CBR = Bank(
-            getString(R.string.cbr),
-            BankId.CBR,
-            CBRParser(),
-            true
-        )
-        val ECB = Bank(
-            getString(R.string.ecb),
-            BankId.ECB,
-            ECBParser(),
-            false
-        )
-        val RBA = Bank(
-            getString(R.string.rba),
-            BankId.RBA,
-            RBAParser(),
-            false
-        )
-        val CANADA = Bank(
-            getString(R.string.bank_of_canada),
-            BankId.CANADA,
-            CanadaParser(),
-            false
-        )
-        val UKR = Bank(
-            getString(R.string.ua),
-            BankId.UA,
-            UAParser(),
-            true
-        )
-        val KZ = Bank(
-            getString(R.string.kz),
-            BankId.KZ,
-            KZParser(),
-            true
-        )
-        val IL = Bank(
-            getString(R.string.IL),
-            BankId.ISRAEL,
-            IsraelParser(),
-            true
-        )
-        val BY = Bank(
-            getString(R.string.BY),
-            BankId.BY,
-            BYParser(),
-            true
-        )
-        val DK = Bank(
-            getString(R.string.DK),
-            BankId.DK,
-            DKParser(),
-            true
-        )
-        val CZ = Bank(
-            getString(R.string.czech),
-            BankId.CZ,
-            CZParser(),
-            true
-        )
-        val KG = Bank(
-            getString(R.string.KG),
-            BankId.KG,
-            KGParser(),
-            true
-        )
-        val TJ = Bank(
-            getString(R.string.TJ),
-            BankId.TJ,
-            TJParser(),
-            true
-        )
-        val NO = Bank(
-            getString(R.string.norges_bank),
-            BankId.Norges,
-            NorgesParser(),
-            true
-        )
-        val SE = Bank(
-            getString(R.string.sweden),
-            BankId.Sweden,
-            SwedenParser(),
-            true
-        )
-        val UK = Bank(
-            getString(R.string.uk),
-            BankId.UK,
-            EnglandParser(),
-            false
-        )
-
-        banks[CBR.bankId] = CBR
-        banks[ECB.bankId] = ECB
-        banks[RBA.bankId] = RBA
-        banks[CANADA.bankId] = CANADA
-        banks[UKR.bankId] = UKR
-        banks[KZ.bankId] = KZ
-        banks[IL.bankId] = IL
-        banks[BY.bankId] = BY
-        banks[DK.bankId] = DK
-        banks[CZ.bankId] = CZ
-        banks[KG.bankId] = KG
-        banks[TJ.bankId] = TJ
-        banks[NO.bankId] = NO
-        banks[SE.bankId] = SE
-        banks[UK.bankId] = UK
     }
 
     private fun setupSpinner(spinner: Spinner, adapter: ArrayAdapter<Bank>) {
@@ -219,7 +103,7 @@ class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLi
 
     override fun onStart() {
         super.onStart()
-        LoadRatesTask(this).execute()
+        presenter.enterView()
     }
 
     override fun onStop() {
@@ -251,23 +135,22 @@ class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLi
 
     private fun getSelectedBanks() {
         val preferences = getSharedPreferences("evroscudo", Context.MODE_PRIVATE)
-        val bank = preferences.getString("bank1", adapter1.getItem(0)!!.bankId.name)
+        val bank = preferences.getString("bank1", BankId.ECB.name)
         spinner1.setSelection(adapter1.getPosition(banks[BankId.valueOf(bank!!)]))
-        val bank2 = preferences.getString("bank2", adapter2.getItem(0)!!.bankId.name)
+        val bank2 = preferences.getString("bank2", BankId.CBR.name)
         spinner2.setSelection(adapter2.getPosition(banks[BankId.valueOf(bank2!!)]))
 
     }
 
-    fun setDates(data: HashMap<String, Date>) {
+    override fun setDates(data: Map<BankId, Date>) {
         for (s in data.keys) {
-            banks[BankId.valueOf(s)]?.date = data[s]
+            banks[s]?.date = data[s]
         }
         updateDates()
     }
 
-    private fun addCurrencies(currencies: Collection<Currency>) {
-        currenciesKeeper.addAll(currencies)
-        ratesAdapter.set(currenciesKeeper.currencies)
+    override fun displayCurrencies(currencies: Collection<Currency>) {
+        ratesAdapter.set(currencies)
     }
 
     private fun updateDates() {
@@ -275,19 +158,6 @@ class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLi
         val date2 = secondBank.date
         dateView1.text = formatDate(date1)
         dateView2.text = formatDate(date2)
-    }
-
-    fun setKeeper(keeper: CurrenciesKeeper) {
-        this.currenciesKeeper = keeper
-    }
-
-    override fun onRefresh() {
-        presenter.onRefresh(firstBank, secondBank)
-    }
-
-    override fun getRatesFromCache() {
-        ratesAdapter.set(currenciesKeeper.currencies)
-        updateDates()
     }
 
     override fun isConnectedToNetwork(): Boolean = isConnectedToNetwork(this)
@@ -341,7 +211,7 @@ class DisplayRatesActivity : AppCompatActivity(), SwipeRefreshLayout.OnRefreshLi
 
     override fun displayData(bank: Bank, data: RatesData) {
         bank.date = data.date
-        addCurrencies(data.currencies)
+        displayCurrencies(data.currencies)
         updateDates()
     }
 }

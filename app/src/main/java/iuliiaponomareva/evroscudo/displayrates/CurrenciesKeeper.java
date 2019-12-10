@@ -1,13 +1,18 @@
-package iuliiaponomareva.evroscudo;
+package iuliiaponomareva.evroscudo.displayrates;
 
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.inject.Inject;
+
+import iuliiaponomareva.evroscudo.Currency;
+
 public class CurrenciesKeeper {
     private Map<String, Currency> currencies = new TreeMap<>();
 
+    @Inject
     public CurrenciesKeeper() {
 
     }
@@ -27,7 +32,7 @@ public class CurrenciesKeeper {
         }
     }
 
-    public void addAll(Collection<Currency> currencies) {
+    public synchronized void addAll(Collection<Currency> currencies) {
         for (Currency c :currencies) {
             add(c);
         }

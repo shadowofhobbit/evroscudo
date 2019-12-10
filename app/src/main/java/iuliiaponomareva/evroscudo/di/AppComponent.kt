@@ -4,8 +4,10 @@ import android.content.Context
 import dagger.BindsInstance
 import dagger.Component
 import iuliiaponomareva.evroscudo.displayrates.DisplayRatesActivity
+import javax.inject.Singleton
 
-@Component(modules = [AppModule::class])
+@Singleton
+@Component(modules = [AppModule::class, DataModule::class])
 interface AppComponent {
 
     @Component.Factory

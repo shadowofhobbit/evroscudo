@@ -1,9 +1,13 @@
 package iuliiaponomareva.evroscudo.displayrates
 
 import io.reactivex.Observable
+import io.reactivex.Single
 import iuliiaponomareva.evroscudo.Bank
+import iuliiaponomareva.evroscudo.BankId
+import iuliiaponomareva.evroscudo.Currency
 import iuliiaponomareva.evroscudo.mvp.BasePresenter
 import iuliiaponomareva.evroscudo.mvp.BaseView
+import java.util.*
 
 interface DisplayRatesContract {
     interface Presenter : BasePresenter<View> {
@@ -11,6 +15,7 @@ interface DisplayRatesContract {
         fun onRefresh(firstBank : Bank, secondBank: Bank)
 
         fun leaveView()
+        fun enterView()
     }
 
     interface View : BaseView {
@@ -20,12 +25,15 @@ interface DisplayRatesContract {
         fun finishRefreshing()
         fun displayInfo()
         fun displaySettings()
-        fun getRatesFromCache()
+        fun displayCurrencies(currencies: Collection<Currency>)
+        fun setDates(data: Map<BankId, Date>)
     }
 
     interface Model {
 
-        fun getRates(vararg banks: Bank)
         fun refreshRates(bank: Bank): Observable<RatesData>
+        fun getRatesFromCache(bank: Bank): RatesData
+        fun getRatesFromDb(): Single<Collection<Currency>>
+        fun getDatesFromDb(): Single<HashMap<BankId, Date>>
     }
 }

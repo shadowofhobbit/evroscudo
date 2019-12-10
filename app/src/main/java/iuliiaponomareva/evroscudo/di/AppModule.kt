@@ -5,6 +5,7 @@ import dagger.Module
 import iuliiaponomareva.evroscudo.displayrates.DisplayRatesContract
 import iuliiaponomareva.evroscudo.displayrates.DisplayRatesModel
 import iuliiaponomareva.evroscudo.displayrates.DisplayRatesPresenter
+import javax.inject.Singleton
 
 @Module
 abstract class AppModule {
@@ -12,5 +13,6 @@ abstract class AppModule {
     abstract fun providePresenter(presenter: DisplayRatesPresenter): DisplayRatesContract.Presenter
 
     @Binds
+    @Singleton
     abstract fun provideModel(model: DisplayRatesModel): DisplayRatesContract.Model
 }
