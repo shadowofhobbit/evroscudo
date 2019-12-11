@@ -65,8 +65,8 @@ public class KGParser extends ExchangeRatesParser {
 
     private Collection<? extends Currency> parseData(XmlPullParser parser) throws IOException, XmlPullParserException {
         List<Currency> currencies = new ArrayList<>();
-        parser.next();
         parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
+        parser.next();
         parser.require(XmlPullParser.START_TAG, null, "CurrencyRates");
         if (dailyDate == null) {
             String unparsedDate = parser.getAttributeValue(null, "Date");

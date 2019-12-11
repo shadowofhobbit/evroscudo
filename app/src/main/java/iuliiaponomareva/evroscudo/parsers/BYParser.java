@@ -30,8 +30,8 @@ public class BYParser extends ExchangeRatesXMLParser {
     @Override
     List<Currency> parseData(XmlPullParser parser) throws IOException, XmlPullParserException {
         List<Currency> currencies = new ArrayList<>();
-        parser.next();
         parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
+        parser.next();
         parser.require(XmlPullParser.START_TAG, null, "DailyExRates");
         String unparsedDate = parser.getAttributeValue(null, "Date");
         try {

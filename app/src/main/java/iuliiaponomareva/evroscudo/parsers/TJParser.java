@@ -25,8 +25,8 @@ public class TJParser extends ExchangeRatesParser {
 
 
     private void parseDate(XmlPullParser parser) throws IOException, XmlPullParserException {
-        parser.next();
         parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
+        parser.next();
         parser.require(XmlPullParser.START_TAG, null, "rss");
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {

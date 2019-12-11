@@ -31,8 +31,8 @@ public class CanadaParser extends ExchangeRatesXMLParser {
     @Override
     List<Currency> parseData(XmlPullParser parser) throws IOException, XmlPullParserException {
         List<Currency> currencies = new ArrayList<>();
+        parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
         parser.next();
-        parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
         parser.require(XmlPullParser.START_TAG, null, "RDF");
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
@@ -54,14 +54,14 @@ public class CanadaParser extends ExchangeRatesXMLParser {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
             }
-            if (parser.getName().equals("cb:statistics")) {
+            if (parser.getName().equals("statistics")) {
                 while (parser.next() != XmlPullParser.END_TAG) {
                     if (parser.getEventType() != XmlPullParser.START_TAG) {
                         continue;
                     }
                     String name = parser.getName();
 
-                    if (name.equals("cb:exchangeRate")) {
+                    if (name.equals("exchangeRate")) {
                         curr = parseCur(parser);
                     } else {
                         skip(parser);
@@ -86,13 +86,13 @@ public class CanadaParser extends ExchangeRatesXMLParser {
 
             String name = parser.getName();
             switch (name) {
-                case "cb:targetCurrency":
+                case "targetCurrency":
                     code = parser.nextText();
                     break;
-                case "cb:value":
+                case "value":
                     bankRate = parser.nextText();
                     break;
-                case "cb:observationPeriod":
+                case "observationPeriod":
                     String unparsedDate = parser.nextText();
                     try {
                         date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.CANADA).parse(unparsedDate);

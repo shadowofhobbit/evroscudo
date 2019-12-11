@@ -31,8 +31,8 @@ public class RBAParser extends ExchangeRatesXMLParser {
     @Override
     List<Currency> parseData(XmlPullParser parser) throws IOException, XmlPullParserException {
         List<Currency> currencies = new ArrayList<>();
+        parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
         parser.next();
-        parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
         parser.require(XmlPullParser.START_TAG, null, "RDF");
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
@@ -57,14 +57,14 @@ Currency curr = null;
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
             }
-            if (parser.getName().equals("cb:statistics")) {
+            if (parser.getName().equals("statistics")) {
                 while (parser.next() != XmlPullParser.END_TAG) {
                     if (parser.getEventType() != XmlPullParser.START_TAG) {
                         continue;
                     }
                     String name = parser.getName();
 
-                    if (name.equals("cb:exchangeRate")) {
+                    if (name.equals("exchangeRate")) {
                         curr = parseCur(parser);
                     } else {
                         skip(parser);
@@ -89,13 +89,13 @@ Currency curr = null;
 
             String name = parser.getName();
             switch (name) {
-                case "cb:targetCurrency":
+                case "targetCurrency":
                     code = parser.nextText();
                     break;
-                case "cb:observation":
+                case "observation":
                     bankRate = parseObservation(parser);
                     break;
-                case "cb:observationPeriod":
+                case "observationPeriod":
                     date = parsePeriod(parser);
                     break;
                 default:
@@ -120,7 +120,7 @@ Currency curr = null;
             }
             String name = parser.getName();
 
-            if (name.equals("cb:period")) {
+            if (name.equals("period")) {
                 String date = parser.nextText();
                 try {
                     //Example:
@@ -145,7 +145,7 @@ Currency curr = null;
             }
             String name = parser.getName();
 
-            if (name.equals("cb:value")) {
+            if (name.equals("value")) {
                 rate = parser.nextText();
 
             } else {

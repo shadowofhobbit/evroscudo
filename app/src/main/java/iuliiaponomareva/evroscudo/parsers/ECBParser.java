@@ -32,8 +32,8 @@ public class ECBParser extends ExchangeRatesXMLParser {
     @Override
     List<Currency> parseData(XmlPullParser parser) throws IOException, XmlPullParserException {
         List<Currency> currencies = new ArrayList<>();
+        parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
         parser.next();
-        parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
         parser.require(XmlPullParser.START_TAG, null, "Envelope");
         while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {

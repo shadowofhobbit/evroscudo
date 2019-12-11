@@ -1,5 +1,7 @@
 package iuliiaponomareva.evroscudo.parsers;
 
+import androidx.annotation.NonNull;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -11,7 +13,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import androidx.annotation.NonNull;
 import iuliiaponomareva.evroscudo.BankId;
 import iuliiaponomareva.evroscudo.Currency;
 
@@ -38,8 +39,8 @@ public class UAParser extends ExchangeRatesXMLParser {
     @Override
     List<Currency> parseData(XmlPullParser parser) throws IOException, XmlPullParserException {
         List<Currency> currencies = new ArrayList<>();
-        parser.next();
         parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
+        parser.next();
 
         parser.require(XmlPullParser.START_TAG, null, "exchange");
 

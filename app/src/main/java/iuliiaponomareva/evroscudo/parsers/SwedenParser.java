@@ -18,6 +18,7 @@ import java.util.Locale;
 
 import iuliiaponomareva.evroscudo.BankId;
 import iuliiaponomareva.evroscudo.Currency;
+import iuliiaponomareva.evroscudo.HttpUtilsKt;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -83,7 +84,7 @@ public class SwedenParser extends ExchangeRatesXMLParser {
 
     @Override
     InputStream downloadUrl(String myURL) throws IOException {
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = HttpUtilsKt.getClient();
         String contentType = "application/soap+xml;charset=UTF-8;action=urn:getLatestInterestAndExchangeRates";
         MediaType mediaType = MediaType.parse(contentType);
         RequestBody body = RequestBody.create(BODY_STRING, mediaType);
@@ -101,21 +102,21 @@ public class SwedenParser extends ExchangeRatesXMLParser {
     @Override
     public List<Currency> parseData(XmlPullParser parser) throws XmlPullParserException, IOException {
         List<Currency> currencies = new ArrayList<>();
-        parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
+        parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, true);
         parser.next();
-        parser.require(XmlPullParser.START_TAG, null, "SOAP-ENV:Envelope");
+        parser.require(XmlPullParser.START_TAG, null, "Envelope");
         do {
             parser.next();
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
             }
-            if ("SOAP-ENV:Body".equals(parser.getName())) {
+            if ("Body".equals(parser.getName())) {
                 do {
                     parser.next();
                     if (parser.getEventType() != XmlPullParser.START_TAG) {
                         continue;
                     }
-                    if (parser.getName().equals("ns0:getLatestInterestAndExchangeRatesResponse")) {
+                    if (parser.getName().equals("getLatestInterestAndExchangeRatesResponse")) {
                         do {
                             parser.next();
                             if (parser.getEventType() != XmlPullParser.START_TAG) {
@@ -127,15 +128,15 @@ public class SwedenParser extends ExchangeRatesXMLParser {
                             } else {
                                 skip(parser);
                             }
-                        }  while (!"ns0:getLatestInterestAndExchangeRatesResponse".equals(parser.getName()));
+                        }  while (!"getLatestInterestAndExchangeRatesResponse".equals(parser.getName()));
                     } else {
                         skip(parser);
                     }
-                }  while (!"SOAP-ENV:Body".equals(parser.getName()));
+                }  while (!"Body".equals(parser.getName()));
             } else {
                 skip(parser);
             }
-        }  while (!"SOAP-ENV:Envelope".equals(parser.getName()));
+        }  while (!"Envelope".equals(parser.getName()));
         return currencies;
     }
 

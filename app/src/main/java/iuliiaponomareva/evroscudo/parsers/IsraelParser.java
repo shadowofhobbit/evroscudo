@@ -20,7 +20,7 @@ public class IsraelParser extends ExchangeRatesXMLParser {
 
     @Override
     String getURL() {
-        return "http://www.boi.org.il/currency.xml";
+        return "https://www.boi.org.il/currency.xml";
     }
 
     @Override
@@ -31,8 +31,8 @@ public class IsraelParser extends ExchangeRatesXMLParser {
     @Override
     List<Currency> parseData(XmlPullParser parser) throws IOException, XmlPullParserException {
         List<Currency> currencies = new ArrayList<>();
-        parser.next();
         parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
+        parser.next();
         parser.require(XmlPullParser.START_TAG, null, "CURRENCIES");
 
         while (parser.next() != XmlPullParser.END_TAG) {
