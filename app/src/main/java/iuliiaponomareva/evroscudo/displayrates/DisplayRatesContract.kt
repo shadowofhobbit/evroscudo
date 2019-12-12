@@ -27,6 +27,7 @@ interface DisplayRatesContract {
         fun displaySettings()
         fun displayCurrencies(currencies: Collection<Currency>)
         fun setDates(data: Map<BankId, Date>)
+        fun startRefreshing()
     }
 
     interface Model {

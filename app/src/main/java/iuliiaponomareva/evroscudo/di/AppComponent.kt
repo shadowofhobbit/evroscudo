@@ -7,7 +7,7 @@ import iuliiaponomareva.evroscudo.displayrates.DisplayRatesActivity
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [AppModule::class, DataModule::class])
+@Component(modules = [AppModule::class, DataModule::class, SchedulersModule::class])
 interface AppComponent {
 
     @Component.Factory

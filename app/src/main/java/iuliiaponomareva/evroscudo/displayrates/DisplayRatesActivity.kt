@@ -48,6 +48,10 @@ class DisplayRatesActivity : AppCompatActivity(), DisplayRatesContract.View {
         presenter.attachView(this)
     }
 
+    override fun startRefreshing() {
+        swipeRefreshLayout.isRefreshing = true
+    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
         return true

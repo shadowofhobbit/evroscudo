@@ -1,11 +1,14 @@
 package iuliiaponomareva.evroscudo.displayrates
 
-import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 import iuliiaponomareva.evroscudo.Bank
 import javax.inject.Inject
 
-class DisplayRatesPresenter @Inject constructor(private val model: DisplayRatesContract.Model) :
+class DisplayRatesPresenter @Inject constructor(
+    private val model: DisplayRatesContract.Model,
+    private val scheduler: Scheduler
+) :
     DisplayRatesContract.Presenter {
     private var view: DisplayRatesContract.View? = null
     private var compositeDisposable = CompositeDisposable()
@@ -14,23 +17,23 @@ class DisplayRatesPresenter @Inject constructor(private val model: DisplayRatesC
         this.view = view
     }
 
-    private val scheduler = AndroidSchedulers.mainThread()
-
     override fun onBankSelected(bank: Bank) {
         view?.apply {
             if (isConnectedToNetwork()) {
-
-                compositeDisposable.add(model.refreshRates(bank)
-                    .observeOn(scheduler)
-                    .subscribe({
-                        if (it.currencies.isEmpty()) {
+                view?.startRefreshing()
+                compositeDisposable.add(
+                    model.refreshRates(bank)
+                        .observeOn(scheduler)
+                        .subscribe({
+                            if (it.currencies.isEmpty()) {
+                                view?.displayError()
+                            }
+                            view?.displayData(bank, data = it)
+                            view?.finishRefreshing()
+                        }, {
                             view?.displayError()
-                        }
-                        view?.displayData(bank, data = it)
-                        view?.finishRefreshing()
-                    }, {
-                        view?.displayError()
-                    })
+                            view?.finishRefreshing()
+                        })
                 )
 
             } else {
@@ -44,18 +47,20 @@ class DisplayRatesPresenter @Inject constructor(private val model: DisplayRatesC
     override fun enterView() {
         compositeDisposable.add(model.getRatesFromDb()
             .observeOn(scheduler)
-            .subscribe ({ data ->
+            .subscribe({ data ->
                 view?.displayCurrencies(data)
             }, {
                 view?.displayError()
-            }))
+            })
+        )
         compositeDisposable.add(model.getDatesFromDb()
             .observeOn(scheduler)
-            .subscribe ({ dates ->
+            .subscribe({ dates ->
                 view?.setDates(dates)
             }, {
                 view?.displayError()
-            }))
+            })
+        )
     }
 
     override fun onRefresh(firstBank: Bank, secondBank: Bank) {
@@ -66,15 +71,19 @@ class DisplayRatesPresenter @Inject constructor(private val model: DisplayRatesC
                     .mergeWith(model.refreshRates(secondBank)
                         .map { ratesData -> Pair(secondBank, ratesData) })
                     .observeOn(scheduler)
-                    .subscribe({
-                        if (it.second.currencies.isEmpty()) {
-                            view?.displayError()
-                        }
-                        view?.displayData(bank = it.first, data = it.second)
-                        view?.finishRefreshing()
-                    },
+                    .subscribe(
                         {
-                            view?.displayError()
+                            if (it.second.currencies.isEmpty()) {
+                                displayError()
+                            }
+                            displayData(bank = it.first, data = it.second)
+                        },
+                        {
+                            displayError()
+                            finishRefreshing()
+                        },
+                        {
+                            finishRefreshing()
                         })
                 )
             } else {
