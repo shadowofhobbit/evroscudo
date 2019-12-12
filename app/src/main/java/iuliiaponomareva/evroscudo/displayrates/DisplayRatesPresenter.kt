@@ -1,5 +1,6 @@
 package iuliiaponomareva.evroscudo.displayrates
 
+import io.reactivex.Observable.mergeDelayError
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 import iuliiaponomareva.evroscudo.Bank
@@ -45,46 +46,50 @@ class DisplayRatesPresenter @Inject constructor(
     }
 
     override fun enterView() {
-        compositeDisposable.add(model.getRatesFromDb()
-            .observeOn(scheduler)
-            .subscribe({ data ->
-                view?.displayCurrencies(data)
-            }, {
-                view?.displayError()
-            })
+        compositeDisposable.add(
+            model.getRatesFromDb()
+                .observeOn(scheduler)
+                .subscribe({ data ->
+                    view?.displayCurrencies(data)
+                }, {
+                    view?.displayError()
+                })
         )
-        compositeDisposable.add(model.getDatesFromDb()
-            .observeOn(scheduler)
-            .subscribe({ dates ->
-                view?.setDates(dates)
-            }, {
-                view?.displayError()
-            })
+        compositeDisposable.add(
+            model.getDatesFromDb()
+                .observeOn(scheduler)
+                .subscribe({ dates ->
+                    view?.setDates(dates)
+                }, {
+                    view?.displayError()
+                })
         )
     }
 
     override fun onRefresh(firstBank: Bank, secondBank: Bank) {
         view?.apply {
             if (isConnectedToNetwork()) {
-                compositeDisposable.add(model.refreshRates(firstBank)
-                    .map { ratesData -> Pair(firstBank, ratesData) }
-                    .mergeWith(model.refreshRates(secondBank)
-                        .map { ratesData -> Pair(secondBank, ratesData) })
-                    .observeOn(scheduler)
-                    .subscribe(
-                        {
-                            if (it.second.currencies.isEmpty()) {
+                compositeDisposable.add(
+                   mergeDelayError(model.refreshRates(firstBank)
+                        .map { ratesData -> Pair(firstBank, ratesData) },
+                        model.refreshRates(secondBank)
+                            .map { ratesData -> Pair(secondBank, ratesData) })
+                        .observeOn(scheduler, true)
+                        .subscribe(
+                            {
+                                if (it.second.currencies.isEmpty()) {
+                                    displayError()
+                                }
+                                displayData(bank = it.first, data = it.second)
+                            },
+                            {
                                 displayError()
-                            }
-                            displayData(bank = it.first, data = it.second)
-                        },
-                        {
-                            displayError()
-                            finishRefreshing()
-                        },
-                        {
-                            finishRefreshing()
-                        })
+                                finishRefreshing()
+                            },
+                            {
+                                finishRefreshing()
+                            })
+
                 )
             } else {
                 displayNoInternet()
