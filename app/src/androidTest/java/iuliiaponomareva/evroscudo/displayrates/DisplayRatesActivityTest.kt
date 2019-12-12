@@ -1,14 +1,16 @@
-package iuliiaponomareva.evroscudo
+package iuliiaponomareva.evroscudo.displayrates
 
-import androidx.test.InstrumentationRegistry
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.intent.Intents.intended
+import androidx.test.espresso.intent.matcher.IntentMatchers
+import androidx.test.espresso.intent.rule.IntentsTestRule
 import androidx.test.espresso.matcher.ViewMatchers.*
-import androidx.test.rule.ActivityTestRule
-import androidx.test.runner.AndroidJUnit4
-import iuliiaponomareva.evroscudo.displayrates.DisplayRatesActivity
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import iuliiaponomareva.evroscudo.R
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -16,7 +18,7 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class DisplayRatesActivityTest {
     @get:Rule
-    val rule = ActivityTestRule<DisplayRatesActivity>(
+    val rule = IntentsTestRule<DisplayRatesActivity>(
         DisplayRatesActivity::class.java)
 
     @Test
@@ -30,10 +32,18 @@ class DisplayRatesActivityTest {
 
     @Test
     fun checkInfoDialog() {
-        openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getContext())
+        openActionBarOverflowOrOptionsMenu(ApplicationProvider.getApplicationContext())
         onView(withText(R.string.info)).check(matches(isDisplayed()))
         onView(withText(R.string.info)).perform(click())
         onView(withText(R.string.info_from)).check(matches(isDisplayed()))
         onView(withText(R.string.ok)).check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun checkSettings() {
+        openActionBarOverflowOrOptionsMenu(ApplicationProvider.getApplicationContext())
+        onView(withText(R.string.settings)).check(matches(isDisplayed()))
+        onView(withText(R.string.settings)).perform(click())
+        intended(IntentMatchers.hasComponent("iuliiaponomareva.evroscudo.settings.SettingsActivity"))
     }
 }
