@@ -140,9 +140,9 @@ class DisplayRatesActivity : AppCompatActivity(), DisplayRatesContract.View {
     private fun getSelectedBanks() {
         val preferences = getSharedPreferences("evroscudo", Context.MODE_PRIVATE)
         val bank = preferences.getString("bank1", BankId.ECB.name)
-        spinner1.setSelection(adapter1.getPosition(banks[BankId.valueOf(bank!!)]))
+        spinner1.setSelection(adapter1.getPosition(banks[BankId.valueOf(bank!!)]), false)
         val bank2 = preferences.getString("bank2", BankId.CBR.name)
-        spinner2.setSelection(adapter2.getPosition(banks[BankId.valueOf(bank2!!)]))
+        spinner2.setSelection(adapter2.getPosition(banks[BankId.valueOf(bank2!!)]), false)
 
     }
 
@@ -190,7 +190,7 @@ class DisplayRatesActivity : AppCompatActivity(), DisplayRatesContract.View {
     override fun displayError() {
         Toast.makeText(
             this@DisplayRatesActivity,
-            "Ошибка", Toast.LENGTH_SHORT
+            getString(R.string.error), Toast.LENGTH_SHORT
         ).show()
     }
 
