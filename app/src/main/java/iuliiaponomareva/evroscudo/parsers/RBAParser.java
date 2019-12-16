@@ -20,7 +20,7 @@ public class RBAParser extends ExchangeRatesXMLParser {
 
     @Override
     String getURL() {
-        return "http://www.rba.gov.au/rss/rss-cb-exchange-rates.xml";
+        return "https://www.rba.gov.au/rss/rss-cb-exchange-rates.xml";
     }
 
     @Override

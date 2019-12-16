@@ -2,6 +2,7 @@ package iuliiaponomareva.evroscudo
 
 import android.content.Context
 import android.net.ConnectivityManager
+import okhttp3.ConnectionSpec
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -16,6 +17,7 @@ private lateinit var client: OkHttpClient
 fun getClient(): OkHttpClient {
     if (!::client.isInitialized) {
         client = OkHttpClient.Builder()
+            .connectionSpecs(listOf(ConnectionSpec.COMPATIBLE_TLS))
             .connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
             .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS).build()
     }

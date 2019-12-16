@@ -23,7 +23,7 @@ public class UAParser extends ExchangeRatesXMLParser {
     @NonNull
     @Override
     String getURL() {
-        return "http://bank.gov.ua/NBUStatService/v1/statdirectory/exchange";
+        return "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange";
     }
 
     @Override

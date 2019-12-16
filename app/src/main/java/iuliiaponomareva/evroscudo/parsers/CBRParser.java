@@ -21,7 +21,7 @@ public class CBRParser extends ExchangeRatesXMLParser {
 
     @Override
     String getURL() {
-        return "http://www.cbr.ru/scripts/XML_daily.asp";
+        return "https://www.cbr.ru/scripts/XML_daily.asp";
     }
 
     @Override

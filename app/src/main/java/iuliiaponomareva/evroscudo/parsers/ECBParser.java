@@ -21,7 +21,7 @@ public class ECBParser extends ExchangeRatesXMLParser {
 
     @Override
     String getURL() {
-        return "http://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
+        return "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
     }
 
     @Override

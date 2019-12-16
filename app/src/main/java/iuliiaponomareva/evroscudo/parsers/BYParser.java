@@ -19,7 +19,7 @@ public class BYParser extends ExchangeRatesXMLParser {
     private Date date;
     @Override
     String getURL() {
-        return "http://www.nbrb.by/Services/XmlExRates.aspx";
+        return "https://www.nbrb.by/Services/XmlExRates.aspx";
     }
 
     @Override

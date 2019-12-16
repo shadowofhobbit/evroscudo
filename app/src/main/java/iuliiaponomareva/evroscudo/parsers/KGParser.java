@@ -22,8 +22,8 @@ import iuliiaponomareva.evroscudo.Currency;
 public class KGParser extends ExchangeRatesParser {
     private Date dailyDate;
 
-    private String dailyUrl = "http://www.nbkr.kg/XML/daily.xml";
-    private String weeklyUrl = "http://www.nbkr.kg/XML/weekly.xml";
+    private String dailyUrl = "https://www.nbkr.kg/XML/daily.xml";
+    private String weeklyUrl = "https://www.nbkr.kg/XML/weekly.xml";
 
     @Override
     public Date getDate() {

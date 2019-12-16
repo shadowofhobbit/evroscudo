@@ -20,7 +20,7 @@ public class KZParser extends ExchangeRatesXMLParser {
 
     @Override
     String getURL() {
-        return "http://www.nationalbank.kz/rss/rates_all.xml";
+        return "https://www.nationalbank.kz/rss/rates_all.xml";
     }
 
     @Override

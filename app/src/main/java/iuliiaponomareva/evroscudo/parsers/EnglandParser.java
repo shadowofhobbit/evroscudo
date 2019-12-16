@@ -1,6 +1,8 @@
 package iuliiaponomareva.evroscudo.parsers;
 
 
+import androidx.annotation.NonNull;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -15,7 +17,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import androidx.annotation.NonNull;
 import iuliiaponomareva.evroscudo.BankId;
 import iuliiaponomareva.evroscudo.Currency;
 
@@ -63,7 +64,7 @@ public class EnglandParser extends ExchangeRatesXMLParser {
         DateFormat format = new SimpleDateFormat("dd/MMM/YYYY", Locale.UK);
         String dateFrom = format.format(from);
         //19/Apr/2018
-        return "http://www.bankofengland.co.uk/boeapps/iadb/fromshowcolumns.asp?CodeVer=new&xml.x=yes" +
+        return "https://www.bankofengland.co.uk/boeapps/iadb/fromshowcolumns.asp?CodeVer=new&xml.x=yes" +
                 "&Datefrom=" + dateFrom + "&Dateto=now&SeriesCodes=XUDLADS,XUDLCDS,XUDLBK89,XUDLBK25,XUDLDKS," +
                 "XUDLERS,XUDLHDS,XUDLBK33,XUDLBK97,XUDLBK78,XUDLJYS,XUDLBK83,XUDLNDS,XUDLNKS,XUDLBK47," +
                 "XUDLBK85,XUDLSRS,XUDLSGS,XUDLZRS,XUDLBK93,XUDLSKS,XUDLSFS,XUDLTWS,XUDLBK87,XUDLBK95," +

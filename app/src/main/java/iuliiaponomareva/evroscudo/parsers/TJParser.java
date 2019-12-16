@@ -111,14 +111,14 @@ public class TJParser extends ExchangeRatesParser {
         InputStream inputStream = null;
         InputStream inputStream2 = null;
         try {
-            inputStream = downloadUrl("http://nbt.tj/ru/kurs/rss.php");
+            inputStream = downloadUrl("https://nbt.tj/ru/kurs/rss.php");
             XmlPullParser parser = Xml.newPullParser();
             parser.setInput(inputStream, null);
             parseDate(parser);
             // example
             // http://nbt.tj/ru/kurs/export_xml.php?date=2016-03-15&export=xmlout
             String fdate = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(date);
-            inputStream2 = downloadUrl("http://nbt.tj/ru/kurs/export_xml.php?date=" + fdate +
+            inputStream2 = downloadUrl("https://nbt.tj/ru/kurs/export_xml.php?date=" + fdate +
             "&export=xmlout");
             XmlPullParser weeklyParser = Xml.newPullParser();
             weeklyParser.setInput(inputStream2, null);

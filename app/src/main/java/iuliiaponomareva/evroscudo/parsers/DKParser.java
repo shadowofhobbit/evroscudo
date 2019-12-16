@@ -20,7 +20,7 @@ public class DKParser extends ExchangeRatesXMLParser {
 
     @Override
     String getURL() {
-        return "http://www.nationalbanken.dk/_vti_bin/DN/DataService.svc/CurrencyRatesXML?lang=en";
+        return "https://www.nationalbanken.dk/_vti_bin/DN/DataService.svc/CurrencyRatesXML?lang=en";
     }
 
     @Override

@@ -3,6 +3,8 @@ package iuliiaponomareva.evroscudo.parsers;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -14,7 +16,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import androidx.annotation.NonNull;
 import iuliiaponomareva.evroscudo.BankId;
 import iuliiaponomareva.evroscudo.Currency;
 
@@ -76,7 +77,7 @@ public class NorgesParser extends ExchangeRatesXMLParser {
                     powerOfTen = Integer.parseInt(power);
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
-                    Log.e("Fontanka", "Error parsing power " + power);
+                    Log.e("Evroscudo", "Error parsing power " + power);
                 }
                 if (dateString != null) {
                     try {

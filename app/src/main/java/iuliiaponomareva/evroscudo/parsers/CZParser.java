@@ -24,7 +24,7 @@ public class CZParser extends ExchangeRatesParser {
 
 
     private String getURL() {
-        return "http://www.cnb.cz/en/financial_markets/foreign_exchange_market/exchange_rate_fixing/daily.txt";
+        return "https://www.cnb.cz/en/financial_markets/foreign_exchange_market/exchange_rate_fixing/daily.txt";
     }
 
     @Override
