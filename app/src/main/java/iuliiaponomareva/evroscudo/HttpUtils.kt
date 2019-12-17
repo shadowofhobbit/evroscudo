@@ -2,10 +2,10 @@ package iuliiaponomareva.evroscudo
 
 import android.content.Context
 import android.net.ConnectivityManager
+import android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET
 import okhttp3.ConnectionSpec
 import okhttp3.OkHttpClient
 import okhttp3.Request
-import okhttp3.Response
 import java.io.IOException
 import java.io.InputStream
 import java.util.concurrent.TimeUnit
@@ -28,13 +28,17 @@ fun getClient(): OkHttpClient {
 @Throws(IOException::class)
 fun getInputStream(url: String): InputStream? {
     val request = Request.Builder().url(url).build()
-    val response: Response
-    response = getClient().newCall(request).execute()
+    val response = getClient().newCall(request).execute()
     return response.body?.byteStream()
 }
 
 fun isConnectedToNetwork(context: Context): Boolean {
     val manager = context.applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+        val activeNetwork = manager.activeNetwork
+        return (activeNetwork != null) &&
+                (manager.getNetworkCapabilities(activeNetwork)?.hasCapability(NET_CAPABILITY_INTERNET) ?: false)
+    }
     val networkInfo = manager.activeNetworkInfo
     return networkInfo != null && networkInfo.isConnected
 }
