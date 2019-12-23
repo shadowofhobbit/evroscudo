@@ -11,8 +11,6 @@ import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.LinearLayoutManager
 import iuliiaponomareva.evroscudo.*
 import iuliiaponomareva.evroscudo.Currency
@@ -43,7 +41,7 @@ class DisplayRatesActivity : AppCompatActivity(), DisplayRatesContract.View {
         (application as App).appComponent.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_display_rates)
-        setUpToolbar()
+        setUpToolbar(savedInstanceState == null)
         setUpListOfRates()
         presenter.attachView(this)
     }
@@ -66,7 +64,7 @@ class DisplayRatesActivity : AppCompatActivity(), DisplayRatesContract.View {
         swipeRefreshLayout.setOnRefreshListener{presenter.onRefresh(firstBank, secondBank)}
     }
 
-    private fun setUpToolbar() {
+    private fun setUpToolbar(handleSelectionNow: Boolean) {
         setSupportActionBar(toolbar)
         val banksList = ArrayList(banks.values)
         banksList.sort()
@@ -74,26 +72,33 @@ class DisplayRatesActivity : AppCompatActivity(), DisplayRatesContract.View {
             this, R.layout.my_spinner_item,
             banksList
         )
-        setupSpinner(spinner1, adapter1)
+        setupSpinner(spinner1, adapter1, handleSelectionNow)
         adapter2 = ArrayAdapter(
             this, R.layout.my_spinner_item,
             banksList
         )
-        setupSpinner(spinner2, adapter2)
+        setupSpinner(spinner2, adapter2, handleSelectionNow)
     }
 
-    private fun setupSpinner(spinner: Spinner, adapter: ArrayAdapter<Bank>) {
+    private fun setupSpinner(spinner: Spinner, adapter: ArrayAdapter<Bank>, attachListener: Boolean = false) {
 
         adapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
         spinner.adapter = adapter
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
+        if (attachListener) {
+            spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>,
+                    view: View?,
+                    pos: Int,
+                    id: Long
+                ) {
 
-                presenter.onBankSelected(adapter.getItem(pos) as Bank)
-            }
+                    presenter.onBankSelected(adapter.getItem(pos) as Bank)
+                }
 
-            override fun onNothingSelected(parent: AdapterView<*>) {
+                override fun onNothingSelected(parent: AdapterView<*>) {
 
+                }
             }
         }
     }
@@ -141,9 +146,28 @@ class DisplayRatesActivity : AppCompatActivity(), DisplayRatesContract.View {
         val preferences = getSharedPreferences("evroscudo", Context.MODE_PRIVATE)
         val bank = preferences.getString("bank1", BankId.ECB.name)
         spinner1.setSelection(adapter1.getPosition(banks[BankId.valueOf(bank!!)]), false)
+
         val bank2 = preferences.getString("bank2", BankId.CBR.name)
         spinner2.setSelection(adapter2.getPosition(banks[BankId.valueOf(bank2!!)]), false)
 
+        spinner1.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
+                presenter.onBankSelected(adapter1.getItem(pos) as Bank)
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+
+            }
+        }
+        spinner2.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
+                presenter.onBankSelected(adapter2.getItem(pos) as Bank)
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+
+            }
+        }
     }
 
     override fun setDates(data: Map<BankId, Date>) {
@@ -222,10 +246,3 @@ class DisplayRatesActivity : AppCompatActivity(), DisplayRatesContract.View {
 
 data class RatesData(val currencies: MutableList<Currency>, val date: Date?)
 
-class RatesViewModel : ViewModel() {
-    private lateinit var rates: MutableLiveData<List<Currency>>
-    fun getData() {
-
-    }
-
-}

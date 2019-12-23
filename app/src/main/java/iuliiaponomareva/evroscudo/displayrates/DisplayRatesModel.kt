@@ -25,6 +25,7 @@ class DisplayRatesModel @Inject constructor(
         return parser.parseRates()
             .doOnNext {
                 if (it.currencies.isNotEmpty()) {
+                    bank.date = it.date
                     ratesLocalDataSource.save(it.currencies, bank)
                     currenciesKeeper.addAll(it.currencies)
                     dates[bank.bankId] = bank.date
