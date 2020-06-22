@@ -39,21 +39,17 @@ public class TJParser extends ExchangeRatesParser {
                         continue;
                     }
                     String name = parser.getName();
-                    switch (name) {
-
-                        case "pubDate":
-                            String unparsedDate = ExchangeRatesXMLParser.readTag(parser, name);
-                            try {
-                                //Example:
-                                //15.03.16
-                                date = new SimpleDateFormat("dd.MM.yy", Locale.US).parse(unparsedDate);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-                            break;
-                        default:
-                            ExchangeRatesXMLParser.skip(parser);
-                            break;
+                    if ("pubDate".equals(name)) {
+                        String unparsedDate = ExchangeRatesXMLParser.readTag(parser, name);
+                        try {
+                            //Example:
+                            //15.03.16
+                            date = new SimpleDateFormat("dd.MM.yy", Locale.US).parse(unparsedDate);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        ExchangeRatesXMLParser.skip(parser);
                     }
                 }
 

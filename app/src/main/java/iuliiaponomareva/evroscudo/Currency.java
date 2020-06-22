@@ -1,15 +1,12 @@
 package iuliiaponomareva.evroscudo;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import iuliiaponomareva.evroscudo.displayrates.DisplayRatesActivity;
 
-public class Currency implements Parcelable {
+public class Currency {
     private String code;
     private Map<BankId, String> bankRates = new HashMap<>(DisplayRatesActivity.BANK_COUNT);
     private Map<BankId, Integer> nominals = new HashMap<>(DisplayRatesActivity.BANK_COUNT);
@@ -17,54 +14,6 @@ public class Currency implements Parcelable {
     public Currency(String code) {
         this.code = code;
     }
-
-    protected Currency(Parcel in) {
-        code = in.readString();
-        int size = in.readInt();
-        for(int i = 0; i < size; i++){
-            BankId key = BankId.valueOf(in.readString());
-            String value = in.readString();
-            bankRates.put(key,value);
-        }
-        size = in.readInt();
-        for(int i = 0; i < size; i++){
-            BankId key = BankId.valueOf(in.readString());
-            int value = in.readInt();
-            nominals.put(key,value);
-        }
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(code);
-        dest.writeInt(bankRates.size());
-        for (Map.Entry<BankId, String> entry : bankRates.entrySet()) {
-            dest.writeString(entry.getKey().name());
-            dest.writeString(entry.getValue());
-        }
-        dest.writeInt(nominals.size());
-        for (Map.Entry<BankId, Integer> entry : nominals.entrySet()) {
-            dest.writeString(entry.getKey().name());
-            dest.writeInt(entry.getValue());
-        }
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    public static final Creator<Currency> CREATOR = new Creator<Currency>() {
-        @Override
-        public Currency createFromParcel(Parcel in) {
-            return new Currency(in);
-        }
-
-        @Override
-        public Currency[] newArray(int size) {
-            return new Currency[size];
-        }
-    };
 
     public String getCode() {
         return code;

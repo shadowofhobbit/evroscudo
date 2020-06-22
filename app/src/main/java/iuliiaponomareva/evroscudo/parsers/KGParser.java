@@ -22,14 +22,13 @@ import iuliiaponomareva.evroscudo.Currency;
 public class KGParser extends ExchangeRatesParser {
     private Date dailyDate;
 
-    private String dailyUrl = "https://www.nbkr.kg/XML/daily.xml";
-    private String weeklyUrl = "https://www.nbkr.kg/XML/weekly.xml";
+    private static final String DAILY_URL = "https://www.nbkr.kg/XML/daily.xml";
+    private static final String WEEKLY_URL = "https://www.nbkr.kg/XML/weekly.xml";
 
     @Override
     public Date getDate() {
         return dailyDate;
     }
-
 
 
     @Override
@@ -38,11 +37,11 @@ public class KGParser extends ExchangeRatesParser {
         InputStream inputStream = null;
         InputStream inputStream2 = null;
         try {
-            inputStream = downloadUrl(dailyUrl);
+            inputStream = downloadUrl(DAILY_URL);
             XmlPullParser parser = Xml.newPullParser();
             parser.setInput(inputStream, null);
             currencies.addAll(parseData(parser));
-            inputStream2 = downloadUrl(weeklyUrl);
+            inputStream2 = downloadUrl(WEEKLY_URL);
             XmlPullParser weeklyParser = Xml.newPullParser();
             weeklyParser.setInput(inputStream2, null);
             currencies.addAll(parseData(weeklyParser));
@@ -50,14 +49,14 @@ public class KGParser extends ExchangeRatesParser {
             e.printStackTrace();
         } finally {
 
-                try {
-                    if (inputStream != null)
+            try {
+                if (inputStream != null)
                     inputStream.close();
-                    if (inputStream2 != null)
-                        inputStream2.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                if (inputStream2 != null)
+                    inputStream2.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
         }
         return currencies;
@@ -98,7 +97,7 @@ public class KGParser extends ExchangeRatesParser {
         String code;
         int nominal = 1;
         code = parser.getAttributeValue(null, "ISOCode");
-        while (parser.next() != XmlPullParser.END_TAG)  {
+        while (parser.next() != XmlPullParser.END_TAG) {
             if (parser.getEventType() != XmlPullParser.START_TAG) {
                 continue;
             }
