@@ -16,7 +16,7 @@ buildscript {
 }
 
 ext {
-    espressoVersion = "3.2.0"
+    espressoVersion = "3.3.0"
 }
 
 allprojects {

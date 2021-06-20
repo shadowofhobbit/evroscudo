@@ -10,14 +10,15 @@ import iuliiaponomareva.evroscudo.parsers.CBRParser
 import iuliiaponomareva.evroscudo.parsers.ECBParser
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.verify
-import org.mockito.MockitoAnnotations
+import org.mockito.junit.MockitoJUnitRunner
 import java.io.IOException
 import java.util.*
 
-
+@RunWith(MockitoJUnitRunner::class)
 class DisplayRatesPresenterTest {
     @Mock
     private lateinit var model: DisplayRatesContract.Model
@@ -33,7 +34,6 @@ class DisplayRatesPresenterTest {
 
     @Before
     fun setUp() {
-        MockitoAnnotations.initMocks(this)
         testScheduler = TestScheduler()
         presenter = DisplayRatesPresenter(model, testScheduler)
         presenter.attachView(view)
